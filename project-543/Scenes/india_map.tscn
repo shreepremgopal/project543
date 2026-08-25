@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://rxljl6r0vxpq"]
+[gd_scene format=3 uid="uid://dslmd8n5qmhev"]
 
-[ext_resource type="Script" uid="uid://dw1w7hfau21fs" path="res://Scenes/india_map.gd" id="1_p4x41"]
+[ext_resource type="Script" uid="uid://dcqsk3lrvf0wo" path="res://scripts/india_map.gd" id="1_p4x41"]
 
-[node name="india_map" type="Node2D" unique_id=803590971]
+[node name="IndiaMap" type="Node2D" unique_id=803590971]
 script = ExtResource("1_p4x41")
