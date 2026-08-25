@@ -1,0 +1,206 @@
+PROJECT 543 — Development Master Roadmap
+We'll treat this as our master production roadmap.
+Gate 0 — Technical Decisions
+•	Choose engine 
+•	Choose language 
+•	Choose GIS/map strategy 
+•	Choose data formats 
+•	Choose IDE/editor 
+•	Choose version-control workflow 
+•	Define project directory architecture 
+Gate 1 — Development Environment
+•	Install required software 
+•	Create repository 
+•	Create project 
+•	Configure project 
+•	First successful build/run 
+•	Establish backup/version-control workflow 
+Gate 2 — GIS Technical Spike
+•	Obtain constituency dataset 
+•	Inspect GIS data 
+•	Validate 543 constituencies 
+•	Convert/process if necessary 
+•	Import into engine 
+•	Render India map 
+•	Click individual constituency 
+•	Display constituency ID/name 
+•	Validate geometry 
+This is our first major technical victory.
+Gate 3 — Tiny Political Prototype
+Before touching 543 real constituencies:
+•	1 fictional constituency 
+•	1 player party 
+•	Money 
+•	Support 
+•	Rally 
+•	Turn 
+•	Visible support change 
+Then:
+•	Interview 
+•	Two action slots 
+•	Basic economy 
+At this point, we have a tiny playable game.
+Gate 4 — Political Simulation Prototype
+•	2 parties 
+•	Personas 
+•	Ideology vectors 
+•	Alignment calculation 
+•	Constituency composition 
+•	Election-strength calculation 
+•	Vote normalization 
+•	Winner calculation 
+Then we'll run the election engine outside the UI and test it heavily.
+Gate 5 — Multi-Constituency Prototype
+•	10 fictional constituencies 
+•	Multiple parties 
+•	Map representation 
+•	Campaign targeting 
+•	Election results 
+•	Seat totals 
+•	Result map 
+Now we have a miniature Project 543.
+Gate 6 — Real 543 Dataset
+•	Import all constituencies 
+•	Validate IDs 
+•	Validate geometry 
+•	Validate states 
+•	Validate population 
+•	Validate turnout 
+•	Validate persona distributions 
+•	Validate exactly 543 constituencies 
+Gate 7 — Full Economy
+•	Starting money 
+•	Businesses 
+•	Business income 
+•	Business limits 
+•	Fundraising 
+•	Risk 
+•	Scandal state 
+•	Risk recovery 
+Gate 8 — Full Campaign
+•	Manifestos 
+•	Rallies 
+•	Interviews 
+•	Campaign saturation 
+•	Temporary effects 
+•	Permanent effects 
+•	Followers 
+•	Action economy 
+Gate 9 — Full 45-Turn Game
+•	Weekly income 
+•	Intelligence phase 
+•	2 actions 
+•	Resolution 
+•	Risk update 
+•	Campaign updates 
+•	Turn advancement 
+•	Turn 45 election trigger 
+Gate 10 — AI
+•	AI party data 
+•	AI economy 
+•	AI campaign 
+•	AI businesses 
+•	AI fundraising 
+•	AI risk 
+•	AI targeting 
+•	AI personalities 
+•	AI turn execution 
+Gate 11 — Election
+•	Resolve all 543 constituencies 
+•	Calculate votes 
+•	Determine winners 
+•	Calculate seats 
+•	Verify exactly 543 seats 
+•	Progressive result animation 
+•	Final map 
+•	Winner 
+•	Majority status 
+Gate 12 — Save/Load
+•	Save game 
+•	Load game 
+•	Preserve turn 
+•	Preserve economy 
+•	Preserve campaign state 
+•	Preserve AI state 
+•	Preserve deterministic state 
+Gate 13 — Automated Testing
+•	Data validation tests 
+•	Economy tests 
+•	Campaign tests 
+•	Risk tests 
+•	Turn tests 
+•	Persona tests 
+•	Election tests 
+•	543-seat integrity test 
+•	Determinism tests 
+Gate 14 — UX / Presentation
+•	Main menu 
+•	Party creation 
+•	Party selection 
+•	Main map 
+•	Constituency panel 
+•	Party screen 
+•	Business screen 
+•	Manifesto screen 
+•	HUD 
+•	Notifications 
+•	Election results 
+•	Tutorial 
+•	Audio 
+•	Visual polish 
+Gate 15 — Balance
+We'll run large numbers of simulated elections and actual playthroughs.
+We'll look for:
+•	Dominant strategies 
+•	Useless actions 
+•	Broken businesses 
+•	Excessive fundraising 
+•	Weak ideology 
+•	Overpowered campaigning 
+•	AI weakness 
+•	Snowballing 
+•	Endgame problems 
+•	Uninteresting constituencies 
+Gate 16 — Alpha → Beta → Release Candidate
+Only after everything above works.
+________________________________________
+One major architectural rule
+There will be three separate layers:
+1. Game data
+Things like:
+Constituency
+Persona
+Party
+Manifesto
+Business
+Balance parameters
+2. Simulation
+Things like:
+ElectionEngine
+EconomySystem
+CampaignSystem
+TurnSystem
+AISystem
+3. Presentation
+Things like:
+Map
+Buttons
+Panels
+Animations
+HUD
+Menus
+The election mathematics should not know that a button exists.
+The map should not calculate election results.
+The UI should request information from the simulation rather than secretly becoming part of the simulation.
+That separation will save us enormous amounts of pain later.
+________________________________________
+Another important decision
+I'm going to be deliberately strict about the GDD.
+If you later say:
+"Let's add newspapers."
+I'll ask whether it belongs in v0.1.
+If the answer is no, it goes into the backlog.
+If we discover that a GDD mechanic is mathematically weak, however, we will change the GDD. The GDD is a design document, not a religious text.
+Our objective isn't to preserve every sentence you've written.
+Our objective is to make a genuinely good game.
+
