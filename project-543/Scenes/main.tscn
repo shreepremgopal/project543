@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://csgm4myjklpni"]
+
+[node name="Main" type="Control" unique_id=1741908696]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -206.0
+offset_right = -1.0
+offset_bottom = -206.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="." unique_id=1461823178]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.156
+anchor_top = 0.16600001
+anchor_right = 0.156
+anchor_bottom = 0.16600001
+offset_left = -85.712006
+offset_top = -24.568008
+offset_right = 148.288
+offset_bottom = 24.431992
+text = "project543, sprint 1, dev build.
+"
