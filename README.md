@@ -10,8 +10,8 @@ Target: Windows PC
 
 ## Current Milestone
 
-Sprint 1 — Development Environment
+Sprint 2
 
 ## Project Status
 
-Pre-production / Prototype
+Production
