@@ -1,0 +1,2041 @@
+
+PROJECT 543
+Complete Game Design Document
+
+Version: 0.1
+Document Type: Game Design Document
+Development Stage: Pre-Production / Prototype Specification
+Genre: Turn-Based Political Strategy & Election Simulation
+Core Experience: Strategic campaign management across 543 Indian parliamentary constituencies
+Campaign Length: 45 weekly turns
+Primary Player Goal: Win the largest number of constituencies
+Map: 543 clickable parliamentary constituencies of India
+Initial Mode: Single-player
+Target Platform: TBD
+Engine: TBD
+
+1. Executive Summary
+
+Project 543 is a turn-based political strategy game built around a complete interactive map of India's 543 parliamentary constituencies.
+
+The player creates or selects a political party and attempts to win an election over a 45-week campaign.
+
+The player begins with limited resources and must decide how to allocate them between:
+
+Building long-term income
+Raising campaign funds
+Managing financial risk
+Increasing support in constituencies
+Selecting appropriate political messaging
+Targeting strategically important constituencies
+
+The game does not simulate individual voters.
+
+Instead, every constituency contains a distribution of approximately 25 abstract voter personas. Each persona has different preferences across a set of ideological dimensions.
+
+The player's party also has an ideological profile.
+
+The election engine calculates how attractive each party is to each persona and combines that information with:
+
+Constituency persona composition
+Party base support
+Campaign actions
+Home constituency advantage
+Turnout
+Other controlled modifiers
+
+At the end of Turn 45, the election is resolved across all 543 constituencies.
+
+Each constituency is won by the party receiving the highest number of votes.
+
+The final result is represented visually by colouring the 543 constituencies according to their winning party.
+
+The party with the highest number of seats wins.
+
+2. Design Vision
+
+Project 543 should answer one simple question:
+
+Can the player make better strategic decisions than their opponents with limited time and resources?
+
+The game should feel less like clicking buttons to increase numbers and more like managing a national campaign.
+
+The player should constantly face decisions such as:
+
+"Do I spend ₹1 lakh trying to flip this constituency, or invest it into a business that will generate money for the next 20 weeks?"
+
+"This constituency is almost winnable. Should I target it?"
+
+"My ideological alignment is poor here. Is campaigning there worth the money?"
+
+"I can raise a lot of money, but my risk is already dangerously high."
+
+The game's strategy emerges from these trade-offs.
+
+3. Core Design Pillars
+3.1 The Map Is the Main Game
+
+The 543-constituency map is the primary game interface.
+
+The player should be able to understand the political situation by looking at the map.
+
+The map communicates:
+
+Current support
+Competitive constituencies
+Campaign activity
+Home constituency
+Election results
+Final seat distribution
+3.2 Easy to Understand, Difficult to Master
+
+The player should understand the visible rules quickly.
+
+Complexity should exist underneath the interface.
+
+The player should see:
+
+"My support here is 27%."
+
+rather than:
+
+"My weighted ideological cosine similarity multiplied by three normalization coefficients is..."
+
+The mathematical model may be sophisticated internally, but the player-facing system should remain understandable.
+
+3.3 Money Creates Opportunity Cost
+
+Money should never simply be "spent because the player has it."
+
+Every expenditure should compete with another possible use.
+
+The player can spend money on:
+
+Immediate campaign influence
+Long-term businesses
+Fundraising-related actions
+Future strategic flexibility
+3.4 Constituencies Matter More Than National Percentages
+
+Project 543 is fundamentally a seat-winning game.
+
+A party can have significant national support and still lose the election if that support is distributed inefficiently.
+
+The player therefore needs to think about:
+
+"Where are my votes?"
+
+rather than only:
+
+"How many votes do I have?"
+
+3.5 The Election Must Feel Earned
+
+The final result should be explainable.
+
+After the election, the player should be able to inspect why a constituency was won or lost.
+
+This makes the simulation feel like a system rather than random number generation.
+
+4. Player Experience
+
+The intended player fantasy is:
+
+"I am building and managing a political campaign and trying to turn limited resources into a national electoral victory."
+
+The player is not expected to control every detail of politics.
+
+Instead, the player acts as the strategic leader of the party.
+
+5. Game Start
+
+The player begins at the Party Setup screen.
+
+There are two options:
+
+5.1 Join Existing Party
+
+The player chooses from predefined fictional parties.
+
+Each party has:
+
+Name
+Colour
+Leader
+Ideological profile
+Starting support profile
+Starting financial state
+
+Existing parties provide different starting difficulties.
+
+Example difficulty structure:
+
+Established Party — high starting support, less flexibility
+Regional Party — strong in selected areas
+Ideological Party — strong alignment with specific personas
+New/Small Party — weak starting support but greater strategic flexibility
+5.2 Create New Party
+
+The player creates:
+
+Party name
+Party colour
+Leader name
+Ideological profile
+
+The player then receives:
+
+Starting Money: ₹5,00,000
+Starting Followers: 100
+
+The party begins with no established national organization beyond its initial home constituency.
+
+6. Party Identity
+
+Each party contains the following core data:
+
+Party
+├── Party ID
+├── Party Name
+├── Party Colour
+├── Leader
+├── Ideological Profile
+├── Money
+├── Followers
+├── Risk
+├── Home Constituency
+├── Base Support
+└── Businesses
+
+7. Ideology System
+7.1 Design Decision
+
+Version 0.1 will not use dozens of individual ideological labels.
+
+Instead, the game uses a small number of continuous ideological dimensions.
+
+Recommended dimensions:
+
+Economic Policy
+Welfare
+Social Policy
+Governance
+Environment
+National Policy
+
+Each dimension is represented internally on a scale from:
+
+-1.0 to +1.0
+
+The player does not need to understand these numbers.
+
+They choose understandable policy positions, and the game converts those selections into the underlying profile.
+
+8. Persona System
+
+Version 0.1 contains 25 abstract voter personas.
+
+These personas are not intended to represent exact real-world demographic groups.
+
+They are gameplay archetypes describing different combinations of political priorities.
+
+Each persona has:
+
+Persona ID
+Display Name
+Six-dimensional ideological preference vector
+Priority weights
+Optional turnout tendency
+9. Proposed 25 Personas
+
+The initial persona set:
+
+Economic Growth Focused
+Welfare Focused
+Public Services Focused
+Low-Tax Focused
+Employment Focused
+Infrastructure Focused
+Governance Reform Focused
+Stability Focused
+Anti-Corruption Focused
+Environmental Focused
+Rural Development Focused
+Urban Development Focused
+Small Business Focused
+Industrial Growth Focused
+Social Reform Focused
+Traditional Values Focused
+Education Focused
+Healthcare Focused
+National Development Focused
+Local Development Focused
+Cost-of-Living Focused
+Technology & Innovation Focused
+Public Safety Focused
+Balanced Policy
+Protest / Change Focused
+
+These are gameplay archetypes, not demographic classifications.
+
+A future version can expand the system substantially.
+
+10. Persona Preference Model
+
+Each persona has an internal preference vector.
+
+Example:
+
+Persona: Economic Growth Focused
+
+Economic Policy:      +0.90
+Welfare:              +0.10
+Social Policy:        +0.20
+Governance:           +0.60
+Environment:          +0.20
+National Policy:      +0.50
+
+
+Another persona may have a completely different profile.
+
+This allows the election engine to calculate ideological compatibility mathematically.
+
+11. Party Ideological Alignment
+
+The game calculates the distance between a party's ideological profile and a persona's preference profile.
+
+The result is converted into an Alignment Score from:
+
+0.00 → 1.00
+
+Where:
+
+0.00 = extremely poor alignment
+0.50 = neutral/moderate alignment
+1.00 = extremely strong alignment
+
+This value is stored internally.
+
+12. Constituency Data
+
+Each of the 543 constituencies contains:
+
+Unique ID
+Name
+State
+Geographic polygon
+Population
+Turnout parameter
+Persona distribution
+Current party support
+Campaign modifiers
+Election result
+
+The geographic data will be imported from GIS files such as:
+
+GeoJSON
+SHP
+Other compatible geographic formats
+
+The map renderer should use the geographic dataset as the source of truth.
+
+13. Constituency Persona Distribution
+
+Each constituency contains a percentage distribution across the 25 personas.
+
+Example:
+
+Constituency A
+
+Persona 01 = 12%
+Persona 02 = 8%
+Persona 03 = 6%
+Persona 04 = 10%
+...
+Persona 25 = 3%
+
+
+All persona percentages must sum to:
+
+100%
+
+This is a mandatory data validation rule.
+
+14. Population Model
+
+Each constituency has a population value.
+
+The sum of all constituency populations should equal the selected national population dataset used by the project.
+
+The initial project target is approximately:
+
+1.5 billion total population
+
+However, the actual game dataset should determine the exact total.
+
+The game should not force constituency populations to sum to 1.5 billion artificially if the imported authoritative dataset uses a different value.
+
+15. Home Constituency
+
+The player selects one constituency as their home constituency.
+
+Selection process:
+
+Open national map.
+Click constituency.
+Display constituency information.
+Show confirmation dialog.
+Player confirms.
+Constituency becomes the player's home constituency.
+
+The home constituency receives:
+
++2% Base Support
+
+This represents the party's local organizational advantage.
+
+16. Support Model
+
+A major design improvement is to avoid having one confusing "Base Value" variable perform too many jobs.
+
+Version 0.1 will use three concepts:
+
+Base Support
+
+Underlying party strength in a constituency.
+
+Campaign Modifier
+
+Temporary/permanent support generated by campaign activity.
+
+Election Score
+
+The final value used by the election engine.
+
+This separation makes balancing significantly easier.
+
+17. Base Support
+
+Base Support represents how naturally strong a party is in a constituency before active campaign actions.
+
+Base Support is influenced by:
+
+Party/persona compatibility
+Existing party strength
+Home constituency advantage
+Other predefined starting conditions
+18. Campaign Support
+
+Campaign actions modify the party's support in a constituency.
+
+Campaign actions in v0.1:
+
+Manifesto
+Rally
+Interview
+19. Manifesto System
+
+The player can select and release a manifesto from a predefined set.
+
+Instead of making manifestos complicated documents, each manifesto is a strategic policy package.
+
+Each manifesto has:
+
+Name
+Description
+Target persona preferences
+Cost
+Support effect
+Duration
+Optional trade-off
+
+Example:
+
+Infrastructure First
+
+Effect:
+Improves alignment with infrastructure-focused personas.
+
+Strength:
+Medium
+
+Duration:
+5 turns
+
+Cost:
+TBD
+
+
+The exact manifesto catalogue should be finalized during balancing.
+
+20. Rally
+Cost
+
+₹1,00,000
+
+Effect
+
++1 percentage point local support
+
+The rally targets one constituency.
+
+The rally should have immediate effect.
+
+Example:
+
+Before: 21.0%
+Rally: +1.0%
+After: 22.0%
+
+
+Support should have an upper cap.
+
+Recommended:
+
+Maximum campaign support contribution: 100%
+
+21. Interview
+Cost
+
+₹50,000
+
+Effect
+
++0.5 percentage point local support
+
+The interview targets one constituency.
+
+Example:
+
+Before: 21.0%
+Interview: +0.5%
+After: 21.5%
+
+22. Campaign Saturation
+
+To prevent infinite spending from producing absurd results, campaign actions should have diminishing effectiveness.
+
+Recommended v0.1 rule:
+
+Repeated actions in the same constituency during a short period become less efficient.
+
+Example:
+
+First Rally:
+
++1.00%
+
+Second Rally:
+
++0.80%
+
+Third Rally:
+
++0.60%
+
+This encourages geographical strategy instead of repeatedly spending money on one constituency.
+
+The exact curve should be configurable.
+
+23. Time System
+
+The campaign consists of:
+
+45 turns
+
+Each turn represents:
+
+1 week
+
+Therefore:
+
+45 weeks of campaigning
+
+At the end of Turn 45, the election occurs.
+
+24. Turn Structure
+
+Each weekly turn follows this sequence:
+
+Phase 1 — Income
+
+The player receives:
+
+Business income
+Other recurring income
+Phase 2 — Intelligence
+
+The player can inspect the map and constituency information.
+
+Phase 3 — Actions
+
+The player performs their available strategic actions.
+
+Phase 4 — Resolution
+
+The game:
+
+Applies temporary effects
+Updates risk
+Updates support
+Processes business income
+Processes other systems
+Phase 5 — Next Week
+
+The turn counter advances.
+
+25. Action Economy
+
+To prevent the game from becoming a simple "spend all your money" simulator, Version 0.1 uses two action slots per turn.
+
+The player receives:
+
+2 strategic actions per week
+
+Actions include:
+
+Rally
+Interview
+Manifesto
+Fundraising
+Business construction
+
+This creates meaningful opportunity cost.
+
+Example:
+
+Week 12
+
+Action 1 → Rally
+Action 2 → Build Hotel
+
+
+The player cannot perform unlimited actions simply because they have money.
+
+This is a key v0.1 balancing mechanism.
+
+26. Business System
+
+Businesses provide recurring income.
+
+The business system represents the player's ability to build a self-sustaining financial organization.
+
+Businesses are constructed through a dedicated Business screen.
+
+27. Business Catalogue
+Business	Construction Cost	Income / Turn
+Food Stall	₹20,000	₹2,000
+Water Supply	₹50,000	₹5,000
+Hotel	₹1,00,000	₹10,000
+Farmland	₹5,00,000	₹50,000
+Large Business	₹10,00,000	₹1,00,000
+
+These figures are intentionally simple for v0.1.
+
+28. Business Limits
+
+To prevent the business system from becoming an infinite-money exploit, businesses should have a configurable limit.
+
+Recommended initial rule:
+
+Maximum 10 businesses of each type.
+
+This can be changed after playtesting.
+
+Future versions may introduce:
+
+Maintenance costs
+Business locations
+Business risk
+Market fluctuations
+Expansion
+Employees
+
+None are required for v0.1.
+
+29. Business ROI
+
+All businesses currently provide approximately the same nominal return:
+
+10% of construction cost per turn
+
+This is useful for initial balancing.
+
+However, this means businesses are effectively investment instruments.
+
+The player must decide whether receiving money immediately is more valuable than receiving larger recurring income later.
+
+30. Fundraising System
+
+The player can perform a fundraising action by requesting financial support from businessmen.
+
+The player chooses how much money to request.
+
+The larger the amount raised, the larger the associated risk.
+
+This creates the following trade-off:
+
+More money
+    ↓
+More campaign capability
+    ↓
+Higher risk
+    ↓
+Potential major penalty
+
+31. Fundraising Risk
+
+Risk is represented as a percentage:
+
+0% → 100%
+
+Risk is visible at all times.
+
+Recommended risk formula:
+
+Risk Increase =
+Money Raised / 100,000 × 2 percentage points
+
+
+Example:
+
+Raise ₹50,000:
+
++1% risk
+
+Raise ₹1,00,000:
+
++2% risk
+
+Raise ₹5,00,000:
+
++10% risk
+
+The exact multiplier should be exposed as a balancing parameter.
+
+32. Risk Threshold
+
+When risk becomes greater than:
+
+50%
+
+the party enters a Financial Scandal State.
+
+The penalty is:
+
+-50% party support strength
+
+for:
+
+10 turns
+
+The penalty should affect election strength, not permanently destroy the player's underlying ideology.
+
+33. Risk Recovery
+
+Risk should naturally decline over time.
+
+Recommended rule:
+
+-2 percentage points per turn
+
+provided the player does not perform another high-risk fundraising action.
+
+This gives the player a strategic recovery mechanism.
+
+Risk cannot fall below:
+
+0%
+
+34. Followers
+
+Followers are a secondary resource.
+
+The player begins with:
+
+100 followers
+
+For v0.1, followers should have a limited purpose rather than being artificially inserted into every system.
+
+Recommended use:
+
+Followers determine the effectiveness of certain campaign actions.
+
+For example:
+
+Rallies consume a small amount of organizational capacity.
+More followers improve campaign efficiency.
+Campaign activity gradually generates additional followers.
+
+However, followers should not directly equal votes.
+
+Followers represent party organization and enthusiasm, not guaranteed electoral support.
+
+35. Election Model
+
+The election model is the most important system in Project 543.
+
+The election engine must evaluate:
+
+Every party × every constituency
+
+at the end of the campaign.
+
+36. Election Calculation
+
+For every constituency:
+
+Step 1 — Determine Voter Population
+Eligible Voters =
+Population × Eligibility Factor
+
+
+The Eligibility Factor can be included in the dataset.
+
+Step 2 — Apply Turnout
+Total Votes =
+Eligible Voters × Turnout
+
+Step 3 — Calculate Party Attractiveness
+
+For every party:
+
+Persona Compatibility =
+Σ(Persona Share × Party Alignment with Persona)
+
+
+This produces a constituency-specific ideological compatibility score.
+
+Step 4 — Combine With Support
+
+A simplified election strength formula:
+
+Election Strength =
+Base Support
+×
+Persona Compatibility
+×
+Campaign Modifier
+×
+Risk Modifier
+
+Step 5 — Normalize
+
+For all parties:
+
+Vote Share =
+Party Election Strength
+/
+Total Election Strength
+
+Step 6 — Calculate Votes
+Votes =
+Vote Share × Total Votes in Constituency
+
+Step 7 — Determine Winner
+
+The party with the highest vote count wins.
+
+37. Election Model Example
+
+Suppose a constituency has:
+
+Total votes = 1,000,000
+
+
+Three parties compete.
+
+Party A Election Strength = 0.42
+Party B Election Strength = 0.35
+Party C Election Strength = 0.23
+
+
+Total:
+
+1.00
+
+
+Therefore:
+
+Party A = 420,000 votes
+Party B = 350,000 votes
+Party C = 230,000 votes
+
+
+Party A wins the constituency.
+
+38. Why This Model Works
+
+This structure produces several desirable strategic behaviours.
+
+Ideological Strength
+
+A party naturally performs better among compatible personas.
+
+Campaigning
+
+Campaign actions improve performance in targeted constituencies.
+
+Money
+
+Money enables more actions.
+
+Businesses
+
+Businesses create long-term financial strength.
+
+Risk
+
+Aggressive fundraising can produce short-term advantages at long-term cost.
+
+Geography
+
+Winning individual constituencies matters more than simply accumulating national support.
+
+39. Constituency Competitiveness
+
+The player should not have to inspect all 543 constituencies mathematically.
+
+The UI should provide a simple competitiveness indicator.
+
+Example:
+
+SAFE WIN
+LIKELY WIN
+COMPETITIVE
+LIKELY LOSS
+SAFE LOSS
+
+
+This is calculated from the current election model.
+
+This is an information layer only.
+
+It should not change the underlying election calculation.
+
+40. Map Colours
+
+Before the election, the map uses information colours.
+
+Possible states:
+
+Home constituency
+Player support
+Competitive
+Leading
+Weak
+
+After the election, the map switches to:
+
+Winner Party Colours
+
+Every constituency is filled using its winning party's colour.
+
+41. Election Results
+
+After Turn 45, the game enters the Election Results sequence.
+
+Recommended sequence:
+
+Stage 1
+
+"Polling has closed."
+
+Stage 2
+
+The 543 constituencies are resolved.
+
+Stage 3
+
+The map progressively changes colour.
+
+Stage 4
+
+Seat totals update.
+
+Stage 5
+
+Final results appear.
+
+Example:
+
+ELECTION RESULTS
+
+Party A       274 seats
+Party B       198 seats
+Party C        51 seats
+Others         20 seats
+
+WINNER
+
+PARTY A
+
+42. Victory Condition
+
+The winner is:
+
+The party that wins the most constituencies.
+
+For the 543-seat parliament:
+
+272 seats = majority
+
+Version 0.1 should distinguish:
+
+Largest Party
+
+Party with the highest seat count.
+
+Majority
+
+Party with at least 272 seats.
+
+The initial game victory condition is:
+
+Highest seat count wins.
+
+A future version can introduce coalition formation.
+
+43. Opponent AI
+
+Version 0.1 requires AI-controlled parties.
+
+AI parties should use the same basic systems as the player.
+
+The AI should:
+
+Receive income
+Spend money
+Campaign
+Build businesses
+Fundraise
+Manage risk
+Target constituencies
+
+The AI does not need sophisticated machine learning.
+
+A rule-based strategic AI is preferable for v0.1.
+
+44. AI Strategic Behaviour
+
+Each AI party should have a personality.
+
+Examples:
+
+Aggressive
+
+Targets competitive constituencies heavily.
+
+Economic
+
+Prioritizes businesses and long-term income.
+
+Campaigner
+
+Spends heavily on rallies and interviews.
+
+Safe Player
+
+Avoids high-risk fundraising.
+
+Ideological
+
+Targets constituencies with high ideological compatibility.
+
+This makes opponents feel different without requiring complex AI.
+
+45. AI Target Selection
+
+The AI should calculate:
+
+Potential Seat Value
+×
+Probability of Winning
+÷
+Campaign Cost
+
+
+It should prioritize constituencies where a relatively small investment could potentially change the winner.
+
+This is one of the most important strategic behaviours in the game.
+
+46. The "Swing Constituency" Concept
+
+A constituency becomes strategically valuable when:
+
+The player is close to first place
+Another campaign action could change the result
+The constituency has sufficient population
+The cost of intervention is reasonable
+
+The UI should highlight these opportunities.
+
+Example:
+
+SWING OPPORTUNITY
+
+You are approximately 0.8% behind the current leader.
+
+This creates clear strategic goals for the player.
+
+47. Information and Fog
+
+Version 0.1 should not hide too much information.
+
+Because this is the first version, the player should be able to inspect:
+
+Population
+Persona composition
+Current support estimate
+Leading party
+Campaign effects
+Competitiveness
+
+This makes it possible to understand whether the game is working.
+
+Future versions can introduce uncertainty and imperfect polling.
+
+48. Main Screens
+
+The game should contain the following primary screens.
+
+48.1 Main Map
+
+The central game screen.
+
+48.2 Constituency Panel
+
+Appears when a constituency is selected.
+
+48.3 Party Screen
+
+Displays:
+
+Party identity
+Leader
+Ideology
+Followers
+Money
+Risk
+48.4 Business Screen
+
+Displays:
+
+Businesses
+Construction
+Income
+Total income
+48.5 Manifesto Screen
+
+Displays available policy packages.
+
+48.6 Election Results
+
+Displays:
+
+Map
+Vote totals
+Seat totals
+Winner
+49. Main HUD
+
+The main map should display:
+
+┌──────────────────────────────────────────────┐
+│ PROJECT 543                                  │
+│                                              │
+│ ₹ 4,25,000   Followers: 184   Risk: 17%     │
+│                                              │
+│ WEEK 18 / 45                                 │
+│                                              │
+│              INDIA MAP                       │
+│                                              │
+│                                              │
+│                                              │
+│ Actions: 2 / 2                               │
+└──────────────────────────────────────────────┘
+
+50. Constituency Panel
+
+When clicking a constituency:
+
+CONSTITUENCY
+
+Name: Example Constituency
+State: Example State
+
+Population: 2,100,000
+Turnout: 71%
+
+Current Leader:
+Party Blue
+
+Your Support:
+24.8%
+
+Status:
+COMPETITIVE
+
+[MANIFESTO]
+[RALLY ₹1,00,000]
+[INTERVIEW ₹50,000]
+
+51. Save System
+
+The game should support saving.
+
+The save state should contain:
+
+Current turn
+Party data
+Money
+Followers
+Risk
+Businesses
+Ideology
+Home constituency
+Constituency campaign modifiers
+AI states
+Election-related state
+Random seed, if randomness exists
+52. Determinism
+
+A major technical design principle:
+
+The election engine should be deterministic.
+
+Given exactly the same:
+
+Constituency data
+Party data
+Persona data
+Campaign state
+Turn
+Seed
+
+the election should produce the same result.
+
+This makes:
+
+Debugging easier
+Balancing easier
+Save/load reliable
+Replays possible
+Bugs reproducible
+53. Data-Driven Design
+
+The following should NOT be hard-coded into gameplay logic:
+
+543 constituency values
+Persona definitions
+Party definitions
+Ideology values
+Business prices
+Business income
+Campaign costs
+Campaign effects
+Risk formulas
+Turn length
+Election parameters
+
+These should be stored in configurable data files.
+
+This allows balancing without rewriting code.
+
+54. Recommended Data Structure
+
+Conceptually:
+
+/data
+    /constituencies
+    /personas
+    /parties
+    /ideologies
+    /manifestos
+    /businesses
+    /balance
+
+
+The exact file format depends on the engine.
+
+55. Core Systems Architecture
+
+The game should conceptually be divided into:
+
+Game Manager
+│
+├── Turn Manager
+│
+├── Party Manager
+│
+├── Economy Manager
+│
+├── Campaign Manager
+│
+├── Persona System
+│
+├── Constituency System
+│
+├── AI Manager
+│
+├── Election Engine
+│
+├── Map Renderer
+│
+├── UI Manager
+│
+└── Save Manager
+
+
+The Election Engine should not directly control UI.
+
+56. Election Engine Interface
+
+Conceptually:
+
+ElectionEngine.CalculateElection(
+    Constituencies,
+    Parties,
+    Personas,
+    CampaignState,
+    TurnoutData
+)
+
+
+returns:
+
+ElectionResult
+├── ConstituencyResults
+├── PartyVoteTotals
+├── PartySeatTotals
+└── Winner
+
+
+This separation is critical.
+
+57. Randomness
+
+Version 0.1 should use minimal randomness.
+
+Randomness should not decide the election arbitrarily.
+
+If randomness exists, it should represent small uncertainty such as:
+
+Minor turnout variation
+Small campaign variation
+Minor events
+
+But the majority of the result should be driven by player decisions and game data.
+
+58. Balance Philosophy
+
+The game should avoid dominant strategies.
+
+The following should all be potentially viable:
+
+Aggressive Campaign
+
+Spend heavily and try to flip seats.
+
+Economic Strategy
+
+Build businesses early and become financially powerful later.
+
+Ideological Strategy
+
+Target constituencies where the party naturally aligns well.
+
+Risk Strategy
+
+Raise large amounts of money while carefully managing the risk threshold.
+
+Regional Strategy
+
+Concentrate resources on a limited number of constituencies.
+
+59. Important Balance Rule
+
+The game should reward efficient targeting, not simply total spending.
+
+A player who spends ₹10 lakh intelligently should potentially outperform a player who spends ₹20 lakh randomly.
+
+This is central to the strategy.
+
+60. Early Game
+
+Turns 1–10 should emphasize:
+
+Establishing the party
+Selecting strategic constituencies
+Building early businesses
+Establishing initial support
+Learning the map
+
+The player should have limited resources.
+
+61. Mid Game
+
+Turns 11–30 should emphasize:
+
+Expanding influence
+Growing income
+Choosing swing constituencies
+Managing risk
+Responding to AI opponents
+
+This should be the main strategic phase.
+
+62. Late Game
+
+Turns 31–45 should emphasize:
+
+Consolidating leads
+Flipping close constituencies
+Spending accumulated resources
+Managing final risks
+Preparing for election
+
+At this point, the player should have a clear sense of whether they are competitive.
+
+63. Endgame Pressure
+
+The player should not be able to spend indefinitely without considering time.
+
+A campaign action on Turn 44 is different from the same action on Turn 5.
+
+This is because there are fewer turns remaining for its effects to matter.
+
+Therefore, campaign effects should have a relationship with duration.
+
+64. Campaign Effect Duration
+
+Version 0.1 should distinguish between:
+
+Permanent Support
+
+Long-term change to base support.
+
+Temporary Support
+
+Effect lasts a specified number of turns.
+
+For simplicity:
+
+Rally → permanent small local modifier
+Interview → temporary modifier
+Manifesto → temporary strategic modifier
+
+This provides useful differentiation.
+
+65. Manifesto Design Philosophy
+
+Manifestos should not simply give:
+
++5% everywhere.
+
+That would remove strategic depth.
+
+Instead, they should influence specific persona groups.
+
+Example:
+
+Education Expansion
+
+Strong effect:
+Education-focused personas
+
+Moderate effect:
+Public-service personas
+
+Weak effect:
+Other personas
+
+
+This means the player must consider constituency composition.
+
+66. Strategic Information Loop
+
+The player should be able to:
+
+Inspect constituency
+        ↓
+Understand personas
+        ↓
+Check party alignment
+        ↓
+Estimate competitiveness
+        ↓
+Choose action
+        ↓
+Spend resource
+        ↓
+Observe support change
+        ↓
+Re-evaluate map
+
+
+This loop should be the heart of gameplay.
+
+67. Accessibility
+
+The game should expose complex information progressively.
+
+Beginner View
+Support
+Leader
+Competitive status
+Cost
+Simple persona summary
+Advanced View
+
+Optional detailed information:
+
+Persona percentages
+Alignment scores
+Election strength
+Vote estimate
+Campaign modifiers
+
+This allows both casual and analytical players to enjoy the game.
+
+68. Tutorial
+
+The first game should introduce the systems gradually.
+
+Tutorial sequence:
+
+Tutorial 1
+
+Select/create party.
+
+Tutorial 2
+
+Select home constituency.
+
+Tutorial 3
+
+Inspect a constituency.
+
+Tutorial 4
+
+Perform a campaign action.
+
+Tutorial 5
+
+Build a business.
+
+Tutorial 6
+
+Explain risk.
+
+Tutorial 7
+
+Advance turns.
+
+Tutorial 8
+
+Reach a simulated election.
+
+The tutorial should teach the system rather than overwhelm the player with explanations.
+
+69. Version 0.1 Scope Lock
+
+The following are IN:
+
+Full 543 constituency map
+GIS constituency data
+Party creation
+Existing fictional parties
+Party ideology
+25 personas
+Constituency persona distributions
+Population
+Turnout
+45 turns
+Two actions per turn
+Home constituency
+Campaign system
+Manifestos
+Rallies
+Interviews
+Business system
+Fundraising
+Risk system
+AI parties
+Election engine
+Vote calculation
+Seat calculation
+Election map colouring
+Save/load
+Basic tutorial
+70. Version 0.1 Scope Exclusions
+
+The following are deliberately OUT:
+
+Multiplayer
+Online multiplayer
+Coalition government
+Parliamentary voting
+Prime Minister simulation
+Minister appointments
+Lawmaking
+Individual politicians beyond party leader
+Real-time gameplay
+Detailed social media
+Detailed news simulation
+International relations
+State governments
+Lok Sabha/assembly cross-simulation
+Individual voter simulation
+Complex corruption mechanics
+Real-world political scandals
+Detailed economics
+Procedurally generated political events
+
+These can become future-version systems.
+
+71. Future Version Potential
+
+Project 543 can eventually expand into a much larger simulation.
+
+Possible future systems:
+
+v0.2
+News
+Media
+Better AI
+More personas
+More campaign actions
+Events
+v0.3
+Coalitions
+Alliances
+Regional organizations
+Candidate selection
+v0.4
+Parliament
+Government formation
+Policy decisions
+v1.0
+Full political strategy simulation
+Advanced AI
+Dynamic national events
+Deep economic model
+Long-term political career
+
+But none of these should delay v0.1.
+
+72. Development Milestones
+Milestone 1 — Map Prototype
+
+Success condition:
+
+All 543 constituencies render correctly and are clickable.
+
+Milestone 2 — Playable Campaign
+
+Success condition:
+
+A player can create a party, select a constituency and complete several turns.
+
+Milestone 3 — Economic Prototype
+
+Success condition:
+
+Money, businesses and fundraising risk function correctly.
+
+Milestone 4 — Political Prototype
+
+Success condition:
+
+Party ideology, personas and constituency support interact correctly.
+
+Milestone 5 — Election Prototype
+
+Success condition:
+
+The game can mathematically resolve all 543 constituencies.
+
+Milestone 6 — AI Prototype
+
+Success condition:
+
+AI parties make meaningful campaign decisions.
+
+Milestone 7 — Full 45-Turn Simulation
+
+Success condition:
+
+A complete campaign can be played from start to election.
+
+Milestone 8 — Balance
+
+Success condition:
+
+Multiple strategies are viable and no single strategy dominates.
+
+Milestone 9 — Presentation
+
+Success condition:
+
+The game looks and feels like a coherent strategy game rather than a prototype.
+
+73. Testing Requirements
+
+The election engine requires automated testing.
+
+Test cases should include:
+
+Test A — Equal Parties
+
+Two identical parties should produce approximately equal results.
+
+Test B — Perfect Alignment
+
+A party with perfect alignment to a constituency's dominant persona should receive a meaningful advantage.
+
+Test C — No Alignment
+
+A party with extremely poor alignment should not magically dominate without other modifiers.
+
+Test D — Campaign Effect
+
+A rally should produce the defined support increase.
+
+Test E — Home Advantage
+
+Home constituency should receive exactly the intended bonus.
+
+Test F — Turnout
+
+Changing turnout should affect votes without changing underlying support percentages.
+
+Test G — Risk
+
+Crossing the risk threshold should activate the intended penalty.
+
+Test H — Business
+
+Business income should be correctly added every turn.
+
+Test I — 543 Constituencies
+
+All 543 constituencies must resolve.
+
+Test J — Seat Count
+
+Total seats awarded must equal:
+
+543
+
+This should always be true.
+
+74. Critical Data Validation
+
+Before the first complete election simulation, the game must validate:
+
+Number of constituencies = 543
+
+Each constituency:
+    Persona sum = 100%
+
+Population >= 0
+
+Turnout between 0% and 100%
+
+Party colours are unique enough to distinguish them
+
+Each party has a valid ideology profile
+
+Each persona has a valid ideology profile
+
+Each constituency has valid geometry
+
+Each constituency has a unique ID
+
+
+A missing or invalid constituency should produce a development error rather than silently producing a bad election.
+
+75. Performance Requirement
+
+The game must be capable of calculating:
+
+All parties × 543 constituencies × 25 personas
+
+quickly enough that the election result feels immediate or nearly immediate.
+
+Because the mathematical workload is relatively small, this should not require complex optimization initially.
+
+The important requirement is clean architecture.
+
+76. Visual Identity
+
+Project 543 should have a professional political-strategy aesthetic.
+
+Recommended visual direction:
+
+Dark neutral interface
+Strong party colours
+Clean map
+High information density
+Minimal visual clutter
+Modern dashboard design
+Clear typography
+Strong election-result presentation
+
+The map should remain the visual hero.
+
+77. Audio Direction
+
+Version 0.1 can use minimal audio.
+
+Required:
+
+UI click sounds
+Turn advancement sound
+Notification sounds
+Election result music
+Victory/defeat music
+
+Voice acting is unnecessary.
+
+78. Game Feel
+
+Even though the game is heavily mathematical, it should not feel like a spreadsheet.
+
+Important feedback moments:
+
+Constituency selected
+Campaign action completed
+Support changed
+Business income received
+Risk increased
+Risk warning
+Turn completed
+Election begins
+Constituency flips
+Seat count changes
+Winner announced
+
+Every important player action should produce immediate visual feedback.
+
+79. Design Principle: Explainable Simulation
+
+The player should always be able to ask:
+
+"Why did I lose this constituency?"
+
+and receive an understandable answer.
+
+Example:
+
+CONSTITUENCY RESULT
+
+Party Blue won by 18,420 votes.
+
+Main factors:
+
+Persona Alignment       +++
+Your Campaign            ++
+Party Base Support       +
+Opponent Campaign       +++
+Turnout                  Normal
+
+
+This is crucial for player trust.
+
+80. Design Principle: No Hidden Magic Numbers
+
+The game should not secretly give unexplained bonuses.
+
+Every major modifier should be discoverable.
+
+If the player's support increases by 1%, the player should know why.
+
+This is particularly important because the game is fundamentally a simulation.
+
+81. Core Game Loop — Final Definition
+
+The definitive v0.1 loop is:
+
+START
+  ↓
+Create / Join Party
+  ↓
+Choose Ideology
+  ↓
+Receive ₹5,00,000 + 100 Followers
+  ↓
+Choose Home Constituency
+  ↓
+BEGIN WEEKLY CAMPAIGN
+  ↓
+Receive Business Income
+  ↓
+Inspect 543-Seat Map
+  ↓
+Choose 2 Actions
+  ↓
+Campaign / Fundraise / Build / Manifesto
+  ↓
+Update Support
+  ↓
+Manage Risk
+  ↓
+Advance Week
+  ↓
+Repeat for 45 Weeks
+  ↓
+ELECTION
+  ↓
+Calculate Votes in 543 Constituencies
+  ↓
+Determine Winners
+  ↓
+Colour Map
+  ↓
+Calculate Seats
+  ↓
+DECLARE WINNER
+
+82. The Core Strategic Triangle
+
+The entire economy and campaign system can ultimately be understood as three competing strategies:
+
+             CAMPAIGN
+             /       \
+            /         \
+           /           \
+       MONEY --------- TIME
+
+
+Money allows campaign activity.
+
+Time determines how long investments have to work.
+
+Campaigning converts resources into electoral strength.
+
+Businesses convert money today into money tomorrow.
+
+Fundraising converts future risk into money today.
+
+This triangle is the central economic strategy of Project 543.
+
+83. The Core Political Triangle
+
+The political system can similarly be understood as:
+
+          IDEOLOGY
+          /      \
+         /        \
+        /          \
+ PERSONAS -------- CAMPAIGN
+
+
+Ideology determines natural compatibility.
+
+Personas determine who exists in each constituency.
+
+Campaigning allows the player to overcome or exploit differences in natural support.
+
+Together they determine election performance.
+
+84. The Ultimate Design Goal
+
+Project 543 should create situations where the player looks at the map and thinks:
+
+"I can't win everywhere."
+
+Then:
+
+"But I don't need to."
+
+Then:
+
+"If I win these 20 constituencies, flip these 8, and protect my 15 strongholds, I might cross 272."
+
+That is the strategic experience the game should deliver.
+
+85. Final Product Definition
+
+Project 543 v0.1 is a 45-turn political strategy game in which the player builds and manages a political party and attempts to win India's 543 parliamentary constituencies.
+
+The player uses:
+
+Ideological positioning
+Persona alignment
+Campaigning
+Financial management
+Business investment
+Fundraising
+Risk management
+Geographic targeting
+
+to maximize their number of seats.
+
+The game culminates in a full election simulation and a visual 543-constituency result map.
+
+86. V0.1 Definition of Done
+
+Version 0.1 is complete when:
+
+ 543 constituencies load correctly.
+ Every constituency is clickable.
+ Geographic boundaries render correctly.
+ A player can create a party.
+ A player can select an existing party.
+ Party ideology can be configured.
+ 25 personas exist.
+ Every constituency has persona data.
+ Population data is loaded.
+ Turnout data is loaded.
+ Home constituency can be selected.
+ Home bonus works.
+ Money system works.
+ Followers exist.
+ Businesses work.
+ Business income is paid every turn.
+ Fundraising works.
+ Risk works.
+ Risk threshold penalty works.
+ Manifestos work.
+ Rallies work.
+ Interviews work.
+ Two-action turn system works.
+ AI parties operate.
+ 45 turns can be completed.
+ Election engine resolves all 543 constituencies.
+ Vote totals are calculated.
+ Exactly 543 seats are awarded.
+ Final map is coloured.
+ Seat totals are displayed.
+ Winner is determined.
+ Game can be saved and loaded.
+ Election results are reproducible.
+ Core systems have automated tests.
+ No single strategy is overwhelmingly dominant after balancing.
+87. Final Senior-Design Recommendation
+
+The biggest mistake at this stage would be to continue adding features.
+
+Do not add more features to v0.1 yet.
+
+The design is now sufficiently complete to move into system specification and prototyping.
+
+The next development document should not be another giant GDD.
+
+The next documents should be small, precise specifications for:
+
+Persona & Ideology Specification
+Election Mathematics Specification
+Economy & Risk Specification
+Turn & Action Specification
+Constituency Data Specification
+UI/UX Specification
+Technical Architecture Specification
+
+These documents should convert this GDD from "what the game is" into "exactly how every system works."
+
+The first of those should be the Persona & Ideology Specification, immediately followed by the Election Mathematics Specification.
+
+Those two systems determine whether the central 543-seat simulation actually works. Once they are mathematically sound, the rest of the game becomes dramatically easier to implement and balance.
