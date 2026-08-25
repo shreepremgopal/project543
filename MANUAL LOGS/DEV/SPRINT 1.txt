@@ -1,0 +1,857 @@
+Absolutely. Since **Task 1.1 is verified**, I'll give you the entire remaining Sprint 1 procedure now.
+
+The important rule remains: **execute sequentially**. If a task fails, stop there and send me the exact error. Do not improvise around it.
+
+# PROJECT 543 — SPRINT 1
+
+## Complete Development Environment Setup
+
+**Current status**
+
+* [x] Windows 11 confirmed
+* [x] Godot 4.7.2 installed
+* [ ] Git
+* [ ] VS Code
+* [ ] Python
+* [ ] Project workspace
+* [ ] Repository
+* [ ] Godot project
+* [ ] Initial architecture
+* [ ] First successful build
+* [ ] First Git commit
+
+---
+
+# TASK 1.2 — Install Git
+
+We need Git from the beginning because the repository becomes our project's safety net.
+
+Use the official Git website:
+
+[Git for Windows — official download](https://git-scm.com/install/windows?utm_source=chatgpt.com)
+
+Download and install **Git for Windows**.
+
+### Installer choices
+
+The installer contains many options. For now, use the defaults.
+
+When you encounter the option concerning the default editor, it is fine to leave the default or choose VS Code if the installer offers it and you are comfortable doing so.
+
+For PATH-related options, keep the recommended/default option that allows Git to be used from the command line.
+
+For line endings, keep the recommended Windows setting.
+
+Don't customize advanced Git behavior yet.
+
+### Verify
+
+Open **PowerShell**.
+
+Press:
+
+**Windows key → type `PowerShell` → Enter**
+
+Run:
+
+```powershell
+git --version
+```
+
+You should receive a Git version.
+
+For example:
+
+```text
+git version 2.x.x
+```
+
+The exact patch version isn't important as long as Git runs successfully.
+
+### Definition of Done
+
+* Git installed
+* `git --version` works
+
+---
+
+# TASK 1.3 — Install Visual Studio Code
+
+Download VS Code from Microsoft's official website:
+
+[Visual Studio Code — official website](https://code.visualstudio.com/?utm_source=chatgpt.com)
+
+Install the **Windows 64-bit User Installer** if that is the normal option presented for your machine.
+
+During installation, if you see options such as:
+
+* Add "Open with Code" to file context menu
+* Add to PATH
+* Register Code as an editor
+
+I recommend enabling them.
+
+These make the development workflow easier.
+
+### Verify
+
+Open VS Code.
+
+Then open:
+
+**Terminal → New Terminal**
+
+Run:
+
+```powershell
+code --version
+```
+
+If the command works, excellent.
+
+If `code` isn't recognized, that's not a project failure. VS Code itself can still be used; we'll fix the PATH integration later if necessary.
+
+### Definition of Done
+
+* VS Code launches
+* VS Code can open a terminal
+
+---
+
+# TASK 1.4 — Install Python
+
+Python will eventually power our GIS/data-processing pipeline.
+
+Download Python from the official Python website:
+
+[Python for Windows — official downloads](https://www.python.org/downloads/windows/?utm_source=chatgpt.com)
+
+Install the current stable **Python 3.x 64-bit** release offered there.
+
+### VERY IMPORTANT
+
+On the first Python installer screen, look for:
+
+**Add python.exe to PATH**
+
+Make sure it is checked.
+
+Then choose:
+
+**Install Now**
+
+### Verify
+
+Open a **new PowerShell window**.
+
+Run:
+
+```powershell
+python --version
+```
+
+Then:
+
+```powershell
+pip --version
+```
+
+Both should return version information.
+
+### Definition of Done
+
+* Python launches from PowerShell
+* pip launches from PowerShell
+
+We aren't installing GeoPandas yet.
+
+That belongs to our GIS technical spike.
+
+---
+
+# TASK 1.5 — Create the Project Workspace
+
+Now we're going to establish a clean development location.
+
+I recommend:
+
+```text
+C:\Dev\
+```
+
+Inside it:
+
+```text
+C:\Dev\Project543\
+```
+
+You can create this through File Explorer.
+
+The resulting structure should currently be:
+
+```text
+C:\
+└── Dev\
+    └── Project543\
+```
+
+### Important
+
+Don't put the project inside:
+
+```text
+Downloads
+Desktop
+OneDrive
+Documents
+```
+
+unless we have a specific reason.
+
+For development, I want a simple local path.
+
+---
+
+# TASK 1.6 — Initialize Git
+
+Open PowerShell.
+
+Run:
+
+```powershell
+cd C:\Dev\Project543
+```
+
+Then:
+
+```powershell
+git init
+```
+
+You should see something indicating that an empty Git repository has been initialized.
+
+Now configure your Git identity.
+
+Use your own name and email:
+
+```powershell
+git config --global user.name "YOUR NAME"
+```
+
+and:
+
+```powershell
+git config --global user.email "YOUR EMAIL"
+```
+
+For example, **do not copy my placeholder values**.
+
+Then verify:
+
+```powershell
+git config --global --list
+```
+
+You should see your name and email.
+
+### Important security rule
+
+Never put passwords, API keys, tokens, private keys, or other secrets into the repository.
+
+Project 543 currently doesn't need any external secrets anyway.
+
+---
+
+# TASK 1.7 — Create the Godot Project
+
+Now we create the actual game.
+
+Launch:
+
+**Godot 4.7.2**
+
+From the Project Manager choose:
+
+**Create**
+
+Set:
+
+### Project Name
+
+```text
+Project 543
+```
+
+### Project Path
+
+```text
+C:\Dev\Project543
+```
+
+### Renderer
+
+For our initial Windows 2D project, choose the standard **Forward+** renderer unless Godot's project creation UI presents a more appropriate current 2D recommendation.
+
+We are not targeting mobile.
+
+### Version Control Metadata
+
+If Godot offers to create version-control metadata, choose **Git**.
+
+Then create the project.
+
+Godot should open the project editor.
+
+---
+
+# TASK 1.8 — Establish the Initial Project Structure
+
+Before creating gameplay, we're going to establish a clean structure.
+
+Inside:
+
+```text
+C:\Dev\Project543\
+```
+
+we eventually want:
+
+```text
+Project543/
+│
+├── project.godot
+│
+├── assets/
+│
+├── data/
+│
+├── scenes/
+│
+├── scripts/
+│
+├── tools/
+│
+├── tests/
+│
+└── docs/
+```
+
+For now, create these folders.
+
+### `assets`
+
+For:
+
+* textures
+* icons
+* fonts
+* audio
+* visual assets
+
+### `data`
+
+For:
+
+* constituencies
+* personas
+* parties
+* manifestos
+* businesses
+* balance configuration
+
+### `scenes`
+
+For Godot scenes.
+
+### `scripts`
+
+For GDScript.
+
+### `tools`
+
+For development utilities and eventually GIS processing integration.
+
+### `tests`
+
+For automated tests and test data.
+
+### `docs`
+
+For project documentation.
+
+---
+
+# TASK 1.9 — Create the README
+
+Inside:
+
+```text
+C:\Dev\Project543\
+```
+
+create:
+
+```text
+README.md
+```
+
+Put something simple inside:
+
+```markdown
+# Project 543
+
+Project 543 is a turn-based political strategy and election simulation game.
+
+## Development
+
+Engine: Godot 4.7.2
+Language: GDScript
+Target: Windows PC
+
+## Current Milestone
+
+Sprint 1 — Development Environment
+
+## Project Status
+
+Pre-production / Prototype
+```
+
+Save it.
+
+This isn't gameplay.
+
+It's simply project documentation.
+
+---
+
+# TASK 1.10 — Create the First Godot Scene
+
+Now we're going to prove that the engine can actually run our project.
+
+Inside Godot:
+
+Choose:
+
+**Scene → New Scene**
+
+Create a basic **User Interface** root node.
+
+Godot should create a `Control` root.
+
+Rename it:
+
+```text
+Main
+```
+
+Save the scene as:
+
+```text
+scenes/Main.tscn
+```
+
+---
+
+# TASK 1.11 — Make the First Visible Project 543 Screen
+
+We don't need fancy UI yet.
+
+Add a `Label` as a child of `Main`.
+
+Set its text to:
+
+```text
+PROJECT 543
+```
+
+Add another `Label`.
+
+Set:
+
+```text
+Development Build
+Sprint 1
+```
+
+Don't spend time making it beautiful.
+
+This is a **technical verification screen**, not the final game UI.
+
+---
+
+# TASK 1.12 — Configure the Main Scene
+
+Save the scene.
+
+Then run the project using:
+
+**F6**
+
+if Godot asks which scene to run, or use:
+
+**F5**
+
+to run the project.
+
+If prompted to choose the main scene, select:
+
+```text
+scenes/Main.tscn
+```
+
+The project should open in a game window.
+
+You should see something equivalent to:
+
+```text
+PROJECT 543
+
+Development Build
+Sprint 1
+```
+
+### This is our first real build.
+
+---
+
+# TASK 1.13 — Verify Project Settings
+
+Before committing, check:
+
+**Project → Project Settings**
+
+We don't need to configure everything.
+
+For now, verify the project exists and opens normally.
+
+Don't start changing:
+
+* rendering settings
+* physics
+* input maps
+* display settings
+* advanced rendering options
+
+unless required.
+
+We're intentionally avoiding premature configuration.
+
+---
+
+# TASK 1.14 — Create a `.gitignore`
+
+This is important.
+
+Godot creates generated/cache files that should not become part of our repository.
+
+Create:
+
+```text
+.gitignore
+```
+
+in:
+
+```text
+C:\Dev\Project543\
+```
+
+Use:
+
+```gitignore
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Temporary files
+*.tmp
+*.temp
+```
+
+One correction for later: if we decide to version Godot export presets, we'll adjust this. For now, we're keeping the repository clean.
+
+---
+
+# TASK 1.15 — Inspect Git Status
+
+Open PowerShell:
+
+```powershell
+cd C:\Dev\Project543
+```
+
+Run:
+
+```powershell
+git status
+```
+
+You should see the new project files listed as untracked.
+
+That is expected.
+
+---
+
+# TASK 1.16 — First Git Commit
+
+Now we create the first snapshot.
+
+Run:
+
+```powershell
+git add .
+```
+
+Then:
+
+```powershell
+git status
+```
+
+Review what Git is about to commit.
+
+You should see the project files staged.
+
+Then:
+
+```powershell
+git commit -m "Initial Project 543 development environment"
+```
+
+You should receive confirmation that the commit was created.
+
+Then run:
+
+```powershell
+git status
+```
+
+Ideally:
+
+```text
+nothing to commit, working tree clean
+```
+
+### This is extremely important.
+
+You have now created our first known-good state.
+
+If something breaks later, we have a point we can return to.
+
+---
+
+# TASK 1.17 — Final Verification
+
+Now perform the complete test from scratch.
+
+### Test A — Godot
+
+Open Godot.
+
+Project:
+
+```text
+Project 543
+```
+
+Does it open?
+
+### Test B — Main Scene
+
+Run the project.
+
+Do you see:
+
+```text
+PROJECT 543
+Development Build
+Sprint 1
+```
+
+?
+
+### Test C — Git
+
+Run:
+
+```powershell
+cd C:\Dev\Project543
+git status
+```
+
+Is the working tree clean?
+
+### Test D — Python
+
+Run:
+
+```powershell
+python --version
+```
+
+### Test E — Git
+
+Run:
+
+```powershell
+git --version
+```
+
+### Test F — VS Code
+
+Open the Project 543 folder in VS Code.
+
+---
+
+# SPRINT 1 — Definition of Done
+
+When everything above succeeds:
+
+## Development Environment
+
+* [x] Windows 11
+* [x] Godot 4.7.2
+* [x] Git
+* [x] VS Code
+* [x] Python
+
+## Project
+
+* [x] `C:\Dev\Project543`
+* [x] Godot project
+* [x] Git repository
+* [x] Initial folder structure
+* [x] README
+* [x] `.gitignore`
+
+## First Build
+
+* [x] Main scene
+* [x] Project launches
+* [x] Visible Project 543 screen
+
+## Version Control
+
+* [x] Initial commit
+* [x] Working tree clean
+
+---
+
+# What NOT to do yet
+
+This is just as important as what you should do.
+
+**Do not:**
+
+* Download constituency GIS data yet.
+* Install GeoPandas yet.
+* Create 543 constituency files.
+* Build the map.
+* Write the election engine.
+* Create personas.
+* Create AI.
+* Create businesses.
+* Create party systems.
+* Add plugins.
+* Design the final UI.
+* Start watching random Godot tutorials and changing the architecture.
+* Upgrade Godot.
+
+We're establishing the foundation first.
+
+---
+
+# What comes immediately after Sprint 1
+
+Once Sprint 1 is verified, we'll move to:
+
+# SPRINT 2 — GIS Technical Spike
+
+This is our first **real technical risk test**.
+
+The objective will be:
+
+> **Load actual Indian parliamentary constituency geometry and click an individual constituency inside Godot.**
+
+The progression will be:
+
+```text
+GIS source
+   ↓
+Inspect dataset
+   ↓
+Validate
+   ↓
+Convert
+   ↓
+Simplify geometry
+   ↓
+Import into Godot
+   ↓
+Render India
+   ↓
+Click constituency
+   ↓
+Identify constituency
+```
+
+We will **not** immediately build all 543 into the game architecture.
+
+First we'll prove that **one real constituency works**.
+
+Then a small batch.
+
+Then all 543.
+
+That is how we're going to eliminate the biggest technical risk instead of discovering it after months of development.
+
+---
+
+## Your execution order
+
+Do these in order:
+
+**1.2 → Git**
+
+**1.3 → VS Code**
+
+**1.4 → Python**
+
+**1.5 → Workspace**
+
+**1.6 → Git repository**
+
+**1.7 → Godot project**
+
+**1.8 → Folders**
+
+**1.9 → README**
+
+**1.10–1.11 → Main scene**
+
+**1.12 → Run**
+
+**1.14 → `.gitignore`**
+
+**1.15–1.16 → First commit**
+
+**1.17 → Full verification**
+
+If everything passes, report back with something like:
+
+> **SPRINT 1 COMPLETE — Godot launches, Project 543 runs, Git commit created, Python and VS Code verified.**
+
+If anything fails, give me the **task number + exact error**, and we'll fix that before declaring Sprint 1 complete.

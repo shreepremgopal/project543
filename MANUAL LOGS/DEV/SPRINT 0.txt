@@ -1,0 +1,889 @@
+Yes. I’m treating this as an actual production kickoff, not as another discussion about the game.
+
+I’ve now evaluated the current tooling and the specific technical requirements of Project 543. **Sprint 0 is complete at the decision level.**
+
+# PROJECT 543 — SPRINT 0
+
+## Technology & Architecture Decision
+
+**Status: APPROVED**
+
+### Our stack
+
+| Area             | Decision                            |
+| ---------------- | ----------------------------------- |
+| Game Engine      | **Godot 4.7.2 Stable**              |
+| Primary Language | **GDScript**                        |
+| Target           | **Windows PC first**                |
+| Map Format       | **GeoJSON-derived game data**       |
+| GIS Processing   | **Python + GeoPandas**              |
+| Game Data        | **JSON initially**                  |
+| Code Editor      | **VS Code**                         |
+| Version Control  | **Git**                             |
+| Repository       | **Private Git repository**          |
+| Simulation       | **Engine-independent architecture** |
+| Rendering        | **Godot 2D**                        |
+| Database         | **None for v0.1**                   |
+| Networking       | **None for v0.1**                   |
+| Cloud services   | **None for v0.1**                   |
+
+This is the stack I would choose if I were personally responsible for getting Project 543 to a successful v0.1.
+
+---
+
+# 1. Engine: Godot 4.7.2
+
+This is my recommendation.
+
+As of August 25, 2026, **Godot 4.7.2 is the current stable 4.7 maintenance release**, released August 18, 2026. Godot 4.8 is currently development/unstable, so we will **not** use 4.8 for this project. ([Godot Engine][1])
+
+[Godot 4.7.2 official download](https://godotengine.org/download/archive/4.7.2-stable/?utm_source=chatgpt.com)
+
+### Why Godot?
+
+Project 543 is fundamentally:
+
+* 2D
+* UI-heavy
+* data-driven
+* simulation-heavy
+* map-centric
+* relatively light computationally
+* desktop-first
+
+We don't need a AAA 3D engine.
+
+We need an engine that lets us efficiently build:
+
+**map → panels → buttons → simulation → data → visualization.**
+
+Godot is extremely well suited to that.
+
+Godot also provides the editor, debugger, animation tools, 2D systems and scene system in one environment. ([Godot Engine documentation][2])
+
+Most importantly for you:
+
+> **Godot is friendly enough for a beginner while still being capable of shipping the complete game.**
+
+---
+
+# 2. Why NOT Unity?
+
+Unity is absolutely capable of making Project 543.
+
+In fact, Unity 6.3 LTS is currently available and supported through December 2027. ([Unity][3])
+
+So this isn't:
+
+> "Unity can't do it."
+
+It can.
+
+The question is:
+
+> **Which technology gives us the best probability of actually finishing Project 543?**
+
+For this particular project, I choose Godot.
+
+Unity introduces additional complexity that we don't need:
+
+* larger ecosystem
+* larger editor
+* more configuration
+* more packages
+* more architectural choices
+* greater learning overhead
+* more opportunities for dependency/version problems
+
+Unity becomes more attractive if we were making:
+
+* a high-end 3D game
+* a huge commercial production with a large Unity team
+* a heavily asset-driven 3D project
+* a game requiring Unity-specific middleware
+
+Project 543 doesn't need those things.
+
+### My decision:
+
+**Unity: technically viable.**
+
+**Godot: strategically preferable.**
+
+We are optimizing for **finishing the game**, not choosing the most famous engine.
+
+---
+
+# 3. Language: GDScript
+
+This is an important decision.
+
+I considered C#.
+
+Godot supports C# on desktop platforms, and current Godot documentation confirms mature C# support. ([Godot Engine documentation][4])
+
+But we are **not** going to use C#.
+
+We're using:
+
+> **GDScript with static typing where useful.**
+
+Why?
+
+Godot itself recommends GDScript for beginners because it is specifically designed for Godot and has tight engine integration. ([Godot Engine documentation][5])
+
+That matters enormously in your situation.
+
+You don't currently need to become a professional C# developer before you can make the game.
+
+You'll learn programming while building the game.
+
+For example, you'll gradually learn things like:
+
+```text
+variables
+functions
+if statements
+loops
+arrays
+dictionaries
+classes
+signals
+resources
+debugging
+```
+
+And I'll explain the code we use.
+
+### Important
+
+I don't want you blindly copying AI-generated code.
+
+If I give you:
+
+```text
+ElectionEngine.calculate_result()
+```
+
+you should eventually understand:
+
+> "This function receives the political data and produces the election result."
+
+That's our learning target.
+
+---
+
+# 4. GIS Strategy
+
+This is the most important technical decision after the engine.
+
+We are **not** going to make Godot directly responsible for understanding every possible GIS format.
+
+Instead:
+
+```text
+RAW GIS DATA
+     ↓
+Python GIS Pipeline
+     ↓
+Validated / Simplified GeoJSON
+     ↓
+Project 543 Data
+     ↓
+Godot
+     ↓
+2D Map
+```
+
+This is much cleaner.
+
+### Why Python?
+
+Python has an enormous GIS/data-processing ecosystem.
+
+We'll use it primarily as a **data preparation tool**, not as the game language.
+
+The game itself remains Godot/GDScript.
+
+---
+
+# 5. We will NOT ship raw Shapefiles inside the game
+
+This is important.
+
+Your original GDD says GIS files could include:
+
+* GeoJSON
+* SHP
+* other formats
+
+That's fine as an **input specification**.
+
+But the game should have one canonical runtime format.
+
+I recommend:
+
+> **GeoJSON during the GIS pipeline, then a simplified Project 543 map dataset for runtime.**
+
+The pipeline can eventually become:
+
+```text
+India GIS source
+      ↓
+Shapefile / GeoJSON / etc.
+      ↓
+Python validation
+      ↓
+Geometry repair
+      ↓
+Coordinate normalization
+      ↓
+Geometry simplification
+      ↓
+Metadata extraction
+      ↓
+Project543_Constituencies.json
+      ↓
+Godot
+```
+
+This gives us control.
+
+---
+
+# 6. Why geometry simplification matters
+
+This is one of the things I want to protect us from early.
+
+Real GIS boundaries can contain **far more coordinate points than a game actually needs**.
+
+We don't need survey-grade boundary precision.
+
+We need:
+
+> visually recognizable + clickable + performant.
+
+Therefore we'll eventually create multiple geometry levels.
+
+For example:
+
+```text
+LOD0
+Very detailed GIS source
+
+LOD1
+Game-quality map
+
+LOD2
+Low-detail overview map
+```
+
+The initial prototype will probably use only one.
+
+Later we can determine whether multiple levels are worthwhile.
+
+---
+
+# 7. Map interaction architecture
+
+I don't want 543 completely independent hand-built scenes.
+
+Instead:
+
+```text
+Map
+│
+├── Constituency 001
+├── Constituency 002
+├── Constituency 003
+│
+└── ...
+    └── Constituency 543
+```
+
+But these will be generated from **data**.
+
+Conceptually:
+
+```text
+ConstituencyData
+        ↓
+ConstituencyRenderer
+        ↓
+Polygon
+        ↓
+Mouse Input
+        ↓
+Constituency ID
+        ↓
+Constituency Panel
+```
+
+Therefore clicking a constituency gives us:
+
+```text
+ID: 123
+Name: ...
+State: ...
+Population: ...
+```
+
+without hardcoding 543 individual maps.
+
+---
+
+# 8. Data architecture
+
+We're going to be aggressively data-driven.
+
+Our project will eventually look roughly like:
+
+```text
+Project543/
+│
+├── project.godot
+│
+├── assets/
+│
+├── data/
+│   ├── constituencies/
+│   ├── personas/
+│   ├── parties/
+│   ├── ideologies/
+│   ├── manifestos/
+│   ├── businesses/
+│   └── balance/
+│
+├── scenes/
+│
+├── scripts/
+│   ├── core/
+│   ├── simulation/
+│   ├── economy/
+│   ├── campaign/
+│   ├── election/
+│   ├── ai/
+│   └── ui/
+│
+├── tools/
+│   └── gis/
+│
+├── tests/
+│
+├── docs/
+│
+└── README.md
+```
+
+This is **not** the final folder structure yet.
+
+We will refine it before implementation.
+
+But the principle is locked:
+
+> **Data is data. Code is code. Presentation is presentation.**
+
+---
+
+# 9. JSON
+
+For v0.1, we'll use JSON for most external game data.
+
+For example, a persona might eventually look conceptually like:
+
+```json
+{
+    "id": "economic_growth",
+    "name": "Economic Growth Focused",
+    "ideology": {
+        "economic_policy": 0.9,
+        "welfare": 0.1,
+        "social_policy": 0.2,
+        "governance": 0.6,
+        "environment": 0.2,
+        "national_policy": 0.5
+    }
+}
+```
+
+This is deliberately simple.
+
+We can inspect and modify it without recompiling the game.
+
+---
+
+# 10. Election Engine architecture
+
+This is one of my strongest decisions.
+
+The election engine should be designed so that it **doesn't care about the map UI**.
+
+Conceptually:
+
+```text
+                    ElectionEngine
+                         │
+        ┌────────────────┼────────────────┐
+        ↓                ↓                ↓
+ Constituencies       Parties          Personas
+        │                │                │
+        └────────────────┼────────────────┘
+                         ↓
+                  Election Results
+                         │
+             ┌───────────┼───────────┐
+             ↓           ↓           ↓
+        Vote Totals  Seat Totals  Winners
+```
+
+The map simply displays the results.
+
+This means we can eventually run:
+
+> **10,000 elections without opening the game window.**
+
+That is going to be extremely useful for balancing.
+
+---
+
+# 11. Simulation architecture
+
+We will also make a distinction between:
+
+### Static data
+
+Things such as:
+
+```text
+543 constituencies
+25 personas
+business definitions
+manifestos
+party archetypes
+balance parameters
+```
+
+and:
+
+### Runtime state
+
+Things such as:
+
+```text
+current week
+player money
+followers
+risk
+campaign modifiers
+businesses owned
+AI state
+home constituency
+```
+
+That distinction will make save/load dramatically easier.
+
+---
+
+# 12. Version control: Git
+
+**Git is mandatory from the first day.**
+
+The current Git for Windows release is 2.55.0, released August 11, 2026. ([Git][6])
+
+[Git official download](https://git-scm.com/install/windows?utm_source=chatgpt.com)
+
+Our rule:
+
+> **No serious development without a Git commit.**
+
+If something works:
+
+```text
+commit
+```
+
+If we complete a milestone:
+
+```text
+commit
+```
+
+If we are about to perform a risky architectural change:
+
+```text
+commit
+```
+
+Git becomes our safety net.
+
+---
+
+# 13. Code editor: VS Code
+
+We'll use **Visual Studio Code** alongside Godot.
+
+[Visual Studio Code official website](https://code.visualstudio.com/?utm_source=chatgpt.com)
+
+VS Code is free and available for Windows, macOS and Linux, and it has strong support for AI-assisted development workflows. ([Visual Studio Code][7])
+
+We'll use it for:
+
+* GDScript
+* JSON
+* Python
+* Git
+* documentation
+* configuration files
+
+Godot remains the game editor.
+
+VS Code becomes our primary code/data workspace.
+
+---
+
+# 14. Python
+
+Python will be a **supporting development tool**, not part of the runtime game.
+
+We'll use it for:
+
+* GIS conversion
+* geometry validation
+* data validation
+* generating test datasets
+* eventually running large simulation batches
+* possibly balance analysis
+
+Current Python releases are available directly from Python.org; the current Windows release line includes Python 3.14.7. ([Python.org][8])
+
+[Python official downloads](https://www.python.org/downloads/windows/?utm_source=chatgpt.com)
+
+We don't need to install every Python GIS package today.
+
+We'll introduce them when the GIS milestone begins.
+
+---
+
+# 15. Why not use a database?
+
+We don't need one.
+
+Not yet.
+
+543 constituencies × 25 personas × several parties is **tiny** from a computational perspective.
+
+We can comfortably keep the simulation in memory.
+
+A database would introduce unnecessary complexity.
+
+For v0.1:
+
+```text
+JSON → memory → simulation → save file
+```
+
+is sufficient.
+
+---
+
+# 16. Why not use a web application?
+
+Technically, we could build Project 543 as a web application.
+
+But I don't recommend it.
+
+The game is intended to be a proper desktop strategy game.
+
+A game engine gives us:
+
+* scene management
+* input
+* rendering
+* animation
+* audio
+* UI
+* save/load
+* packaging
+* desktop export
+
+without us constructing our own game framework.
+
+So:
+
+**Web stack: possible.**
+
+**Game engine: better fit.**
+
+---
+
+# 17. Target platform
+
+We're locking:
+
+> **Windows PC first.**
+
+Not because other platforms are impossible.
+
+Because we need to reduce variables.
+
+Later:
+
+```text
+Windows
+   ↓
+Linux/macOS if worthwhile
+   ↓
+Other platforms if justified
+```
+
+We do **not** design around mobile right now.
+
+---
+
+# 18. Version policy
+
+This is another decision I'm locking.
+
+We will **not chase engine updates**.
+
+Godot 4.8 is currently development/unstable. Godot's release policy distinguishes supported stable branches from development builds. ([Godot Engine][1])
+
+Therefore:
+
+### Project 543 v0.1
+
+**Godot 4.7.2 stable**
+
+No:
+
+```text
+Godot 4.8-dev
+Godot nightly
+random plugins requiring newer versions
+```
+
+If 4.7.2 works, we stay on it.
+
+Engine upgrades happen deliberately.
+
+---
+
+# 19. Plugins
+
+Our philosophy:
+
+> **Minimal dependencies.**
+
+Every external plugin is another potential future failure.
+
+For v0.1, we should aim for:
+
+```text
+Godot
++
+GDScript
++
+Python GIS tooling
++
+Git
++
+VS Code
+```
+
+That's it.
+
+If we later discover a plugin that provides enormous value, we'll evaluate it individually.
+
+---
+
+# 20. Architecture decision
+
+This is our provisional architecture:
+
+```text
+                   PROJECT 543
+                        │
+        ┌───────────────┴────────────────┐
+        │                                │
+   DATA PIPELINE                     GAME
+        │                                │
+     Python                         Godot 4.7
+        │                                │
+      GIS                           Presentation
+        │                                │
+      JSON                     Simulation Systems
+        │                                │
+        └───────────────┬────────────────┘
+                        │
+                 Deterministic State
+                        │
+                  Election Engine
+                        │
+                 Election Results
+```
+
+The critical separation is:
+
+```text
+DATA
+ ↓
+SIMULATION
+ ↓
+PRESENTATION
+```
+
+---
+
+# 21. Technology Risk Assessment
+
+Here is my honest assessment.
+
+| Risk                  |      Level | Mitigation                       |
+| --------------------- | ---------: | -------------------------------- |
+| GIS polygon rendering |   **High** | Technical spike first            |
+| GIS geometry quality  |   **High** | Python validation/simplification |
+| Election mathematics  | **Medium** | Independent simulation/testing   |
+| UI complexity         |     Medium | Build incrementally              |
+| AI                    |     Medium | Rule-based AI                    |
+| Performance           |        Low | 543 constituencies is manageable |
+| Save/load             |        Low | Explicit runtime-state model     |
+| Beginner programming  |     Medium | Small tasks + explanations       |
+| Data management       |     Medium | Strict schemas/validation        |
+| Feature creep         |   **High** | v0.1 scope lock                  |
+| Engine limitations    |        Low | Godot 4.7 is sufficient          |
+| Dependency problems   |     Medium | Minimal plugins                  |
+
+The two things I am most concerned about are:
+
+### #1 GIS
+
+and
+
+### #2 Election mathematics.
+
+Everything else is comparatively straightforward.
+
+That's why our first two serious technical milestones will focus on exactly those.
+
+---
+
+# 22. Sprint 0 Decision
+
+I am officially recommending:
+
+> **Godot 4.7.2 + GDScript + Python GIS pipeline + JSON + VS Code + Git + Windows PC.**
+
+I consider this decision **locked for v0.1 unless a technical spike proves it inadequate.**
+
+That last clause matters.
+
+We don't change technology because we see something shinier.
+
+We change it only because evidence says we must.
+
+---
+
+# 23. Sprint 0 Definition of Done
+
+Sprint 0 is complete when we have made these decisions:
+
+* [x] Engine selected
+* [x] Engine version selected
+* [x] Programming language selected
+* [x] GIS architecture selected
+* [x] Runtime map format selected
+* [x] Data format selected
+* [x] IDE selected
+* [x] Version control selected
+* [x] Target platform selected
+* [x] Architecture direction established
+* [x] Major technical risks identified
+* [x] Version policy established
+* [x] Dependency philosophy established
+
+**Sprint 0: COMPLETE.**
+
+---
+
+# Next: Sprint 1
+
+Now we stop designing and start building.
+
+## SPRINT 1 — Development Environment
+
+Our first objective is intentionally boring:
+
+> **Get Project 543 running on your computer.**
+
+We will do this in very small tasks.
+
+### Task 1.1
+
+Install **Godot 4.7.2**.
+
+### Task 1.2
+
+Install **Git**.
+
+### Task 1.3
+
+Install **VS Code**.
+
+### Task 1.4
+
+Install **Python**.
+
+### Task 1.5
+
+Create the Project 543 directory.
+
+### Task 1.6
+
+Create the Git repository.
+
+### Task 1.7
+
+Create the Godot project.
+
+### Task 1.8
+
+Configure the initial project.
+
+### Task 1.9
+
+Run the blank project.
+
+### Task 1.10
+
+Make the first Git commit.
+
+And then we stop.
+
+No map.
+
+No party system.
+
+No election code.
+
+No 543 constituencies.
+
+Just:
+
+**Project 543 launches successfully and exists safely in version control.**
+
+That is our first verified build.
+
+### One thing I need from you before Task 1.1
+
+Tell me **what operating system you are using** (for example, Windows 11, Windows 10, macOS, or Linux).
+
+I already recommend Windows PC as our target, but I need your actual development OS before I give you the installation instructions.
+
+[1]: https://godotengine.org/download/archive/?utm_source=chatgpt.com "Godot download archive – Godot Engine"
+[2]: https://docs.godotengine.org/en/latest/getting_started/introduction/introduction_to_godot.html?utm_source=chatgpt.com "Introduction to Godot — Godot Engine (latest) documentation in English"
+[3]: https://unity.com/releases/unity-6?utm_source=chatgpt.com "Unity 6: Download the Latest Release of Unity 6 | Unity"
+[4]: https://docs.godotengine.org/en/latest/tutorials/scripting/c_sharp/index.html?utm_source=chatgpt.com "C#/.NET — Godot Engine (latest) documentation in English"
+[5]: https://docs.godotengine.org/en/latest/getting_started/step_by_step/scripting_languages.html?utm_source=chatgpt.com "Scripting languages — Godot Engine (latest) documentation in English"
+[6]: https://git-scm.com/install/windows?utm_source=chatgpt.com "Git - Install for Windows"
+[7]: https://code.visualstudio.com/docs/getstarted/overview?utm_source=chatgpt.com "Get started with Visual Studio Code"
+[8]: https://www.python.org/downloads/windows/?utm_source=chatgpt.com "Python Releases for Windows | Python.org"
