@@ -5,6 +5,9 @@ extends Node2D
 @onready var constituency_panel: PanelContainer = $HUD/Panel
 
 
+var political_system: PoliticalSystem
+
+
 func _ready() -> void:
 	print("MAIN CHILDREN: ", get_children())
 
@@ -23,10 +26,40 @@ func _ready() -> void:
 		)
 		return
 
+	political_system = PoliticalSystem.new()
+
 	map.constituency_selected.connect(
-		constituency_panel.show_constituency
+		_on_constituency_selected
 	)
 
 	map.constituency_cleared.connect(
 		constituency_panel.clear_constituency
+	)
+
+
+func _on_constituency_selected(
+	constituency_id: String
+) -> void:
+	constituency_panel.show_constituency(
+		constituency_id
+	)
+
+	var party_id := PoliticalMapAdapter.leading_party_id(
+		political_system.state,
+		constituency_id
+	)
+
+	var colour := PoliticalMapAdapter.leading_party_colour(
+		political_system.state,
+		political_system.party_registry,
+		constituency_id
+	)
+
+	print(
+		"Selected constituency: ",
+		constituency_id,
+		" | Leading party: ",
+		party_id,
+		" | Colour: ",
+		colour
 	)

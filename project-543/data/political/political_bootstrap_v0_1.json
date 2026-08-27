@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "dataset_version": "political-bootstrap-v0.1",
+  "status": "DETERMINISTIC_BOOTSTRAP",
+  "identity_source": "res://data/generated/india_ls_seats_543_runtime.geojson",
+  "persona_source": "res://data/political/political_personas_v0_1.json",
+  "distribution_units": 10000,
+  "generation_method": "sha256_constituency_identity_weighted_persona_distribution",
+  "seed_policy": "constituency_unique_id_only",
+  "note": "This dataset establishes the Sprint 5 political-system infrastructure without claiming real-world constituency polling or demographic truth. It is replaceable by an approved constituency political-demographic dataset without changing the political engine."
+}

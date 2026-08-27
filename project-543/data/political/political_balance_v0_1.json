@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "model_version": "political-v0.1",
+  "config_version": "political-config-v0.1",
+  "polling_model_version": "polling-v0.1",
+
+  "alignment_lambda": 2.0,
+
+  "poll_basic_cost": 10000,
+  "poll_standard_cost": 25000,
+  "poll_deep_cost": 50000,
+
+  "poll_basic_uncertainty": 0.12,
+  "poll_standard_uncertainty": 0.07,
+  "poll_deep_uncertainty": 0.035,
+
+  "stale_after_turns": 3,
+
+  "support_tolerance": 0.000001,
+  "salience_tolerance": 0.000001,
+  "distribution_tolerance": 0.000001
+}

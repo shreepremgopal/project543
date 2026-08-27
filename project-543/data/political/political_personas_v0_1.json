@@ -1,0 +1,483 @@
+{
+  "schema_version": 1,
+  "dataset_version": "political-personas-v0.1-bootstrap",
+  "status": "BOOTSTRAP_NUMERICAL_VALUES",
+  "source_note": "Sprint 4 persona identities were approved, but numerical values were unresolved. These values are deterministic V0.1 gameplay bootstrap values and are replaceable by an approved political dataset.",
+  "personas": [
+    {
+      "persona_id": "persona_01",
+      "ideology_profile": {
+        "economic_policy": 0.75,
+        "welfare": -0.25,
+        "social_policy": 0.05,
+        "governance": 0.15,
+        "environment": 0.0,
+        "national_policy": 0.35
+      },
+      "priority_weights": {
+        "economic_policy": 0.40,
+        "welfare": 0.20,
+        "social_policy": 0.10,
+        "governance": 0.10,
+        "environment": 0.10,
+        "national_policy": 0.10
+      }
+    },
+    {
+      "persona_id": "persona_02",
+      "ideology_profile": {
+        "economic_policy": -0.35,
+        "welfare": 0.80,
+        "social_policy": 0.10,
+        "governance": 0.10,
+        "environment": 0.05,
+        "national_policy": 0.05
+      },
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.45,
+        "social_policy": 0.10,
+        "governance": 0.10,
+        "environment": 0.10,
+        "national_policy": 0.10
+      }
+    },
+    {
+      "persona_id": "persona_03",
+      "ideology_profile": {
+        "economic_policy": -0.20,
+        "welfare": 0.65,
+        "social_policy": 0.05,
+        "governance": 0.30,
+        "environment": 0.10,
+        "national_policy": 0.05
+      },
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.35,
+        "social_policy": 0.05,
+        "governance": 0.25,
+        "environment": 0.10,
+        "national_policy": 0.10
+      }
+    },
+    {
+      "persona_id": "persona_04",
+      "ideology_profile": {
+        "economic_policy": 0.85,
+        "welfare": -0.55,
+        "social_policy": 0.05,
+        "governance": 0.10,
+        "environment": -0.05,
+        "national_policy": 0.20
+      },
+      "priority_weights": {
+        "economic_policy": 0.50,
+        "welfare": 0.20,
+        "social_policy": 0.05,
+        "governance": 0.10,
+        "environment": 0.05,
+        "national_policy": 0.10
+      }
+    },
+    {
+      "persona_id": "persona_05",
+      "ideology_profile": {
+        "economic_policy": 0.35,
+        "welfare": 0.25,
+        "social_policy": 0.05,
+        "governance": 0.20,
+        "environment": 0.05,
+        "national_policy": 0.20
+      },
+      "priority_weights": {
+        "economic_policy": 0.30,
+        "welfare": 0.20,
+        "social_policy": 0.05,
+        "governance": 0.20,
+        "environment": 0.05,
+        "national_policy": 0.20
+      }
+    },
+    {
+      "persona_id": "persona_06",
+      "ideology_profile": {
+        "economic_policy": 0.45,
+        "welfare": 0.15,
+        "social_policy": 0.0,
+        "governance": 0.35,
+        "environment": 0.05,
+        "national_policy": 0.25
+      },
+      "priority_weights": {
+        "economic_policy": 0.25,
+        "welfare": 0.10,
+        "social_policy": 0.05,
+        "governance": 0.30,
+        "environment": 0.05,
+        "national_policy": 0.25
+      }
+    },
+    {
+      "persona_id": "persona_07",
+      "ideology_profile": {
+        "economic_policy": 0.0,
+        "welfare": 0.10,
+        "social_policy": 0.10,
+        "governance": 0.85,
+        "environment": 0.05,
+        "national_policy": 0.15
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.10,
+        "social_policy": 0.10,
+        "governance": 0.50,
+        "environment": 0.05,
+        "national_policy": 0.15
+      }
+    },
+    {
+      "persona_id": "persona_08",
+      "ideology_profile": {
+        "economic_policy": 0.15,
+        "welfare": 0.15,
+        "social_policy": 0.15,
+        "governance": 0.55,
+        "environment": 0.0,
+        "national_policy": 0.45
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.10,
+        "social_policy": 0.10,
+        "governance": 0.25,
+        "environment": 0.05,
+        "national_policy": 0.40
+      }
+    },
+    {
+      "persona_id": "persona_09",
+      "ideology_profile": {
+        "economic_policy": -0.10,
+        "welfare": 0.15,
+        "social_policy": 0.15,
+        "governance": 0.90,
+        "environment": 0.10,
+        "national_policy": 0.15
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.10,
+        "social_policy": 0.10,
+        "governance": 0.50,
+        "environment": 0.10,
+        "national_policy": 0.10
+      }
+    },
+    {
+      "persona_id": "persona_10",
+      "ideology_profile": {
+        "economic_policy": -0.15,
+        "welfare": 0.30,
+        "social_policy": 0.20,
+        "governance": 0.15,
+        "environment": 0.90,
+        "national_policy": 0.0
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.15,
+        "social_policy": 0.10,
+        "governance": 0.10,
+        "environment": 0.50,
+        "national_policy": 0.05
+      }
+    },
+    {
+      "persona_id": "persona_11",
+      "ideology_profile": {
+        "economic_policy": 0.20,
+        "welfare": 0.25,
+        "social_policy": 0.05,
+        "governance": 0.10,
+        "environment": 0.25,
+        "national_policy": 0.35
+      },
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.25,
+        "social_policy": 0.05,
+        "governance": 0.10,
+        "environment": 0.20,
+        "national_policy": 0.25
+      }
+    },
+    {
+      "persona_id": "persona_12",
+      "ideology_profile": {
+        "economic_policy": 0.30,
+        "welfare": 0.20,
+        "social_policy": 0.15,
+        "governance": 0.25,
+        "environment": 0.15,
+        "national_policy": 0.10
+      },
+      "priority_weights": {
+        "economic_policy": 0.20,
+        "welfare": 0.15,
+        "social_policy": 0.15,
+        "governance": 0.20,
+        "environment": 0.20,
+        "national_policy": 0.10
+      }
+    },
+    {
+      "persona_id": "persona_13",
+      "ideology_profile": {
+        "economic_policy": 0.70,
+        "welfare": 0.0,
+        "social_policy": 0.05,
+        "governance": 0.20,
+        "environment": 0.0,
+        "national_policy": 0.25
+      },
+      "priority_weights": {
+        "economic_policy": 0.45,
+        "welfare": 0.10,
+        "social_policy": 0.05,
+        "governance": 0.15,
+        "environment": 0.05,
+        "national_policy": 0.20
+      }
+    },
+    {
+      "persona_id": "persona_14",
+      "ideology_profile": {
+        "economic_policy": 0.75,
+        "welfare": 0.10,
+        "social_policy": 0.0,
+        "governance": 0.15,
+        "environment": -0.05,
+        "national_policy": 0.40
+      },
+      "priority_weights": {
+        "economic_policy": 0.40,
+        "welfare": 0.10,
+        "social_policy": 0.05,
+        "governance": 0.10,
+        "environment": 0.05,
+        "national_policy": 0.30
+      }
+    },
+    {
+      "persona_id": "persona_15",
+      "ideology_profile": {
+        "economic_policy": -0.25,
+        "welfare": 0.40,
+        "social_policy": 0.80,
+        "governance": 0.15,
+        "environment": 0.20,
+        "national_policy": -0.05
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.20,
+        "social_policy": 0.45,
+        "governance": 0.10,
+        "environment": 0.10,
+        "national_policy": 0.05
+      }
+    },
+    {
+      "persona_id": "persona_16",
+      "ideology_profile": {
+        "economic_policy": 0.15,
+        "welfare": 0.10,
+        "social_policy": -0.65,
+        "governance": 0.20,
+        "environment": -0.05,
+        "national_policy": 0.55
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.10,
+        "social_policy": 0.40,
+        "governance": 0.10,
+        "environment": 0.05,
+        "national_policy": 0.25
+      }
+    },
+    {
+      "persona_id": "persona_17",
+      "ideology_profile": {
+        "economic_policy": -0.10,
+        "welfare": 0.40,
+        "social_policy": 0.25,
+        "governance": 0.30,
+        "environment": 0.20,
+        "national_policy": 0.05
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.25,
+        "social_policy": 0.15,
+        "governance": 0.20,
+        "environment": 0.20,
+        "national_policy": 0.10
+      }
+    },
+    {
+      "persona_id": "persona_18",
+      "ideology_profile": {
+        "economic_policy": -0.25,
+        "welfare": 0.70,
+        "social_policy": 0.15,
+        "governance": 0.15,
+        "environment": 0.15,
+        "national_policy": 0.0
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.45,
+        "social_policy": 0.10,
+        "governance": 0.10,
+        "environment": 0.20,
+        "national_policy": 0.05
+      }
+    },
+    {
+      "persona_id": "persona_19",
+      "ideology_profile": {
+        "economic_policy": 0.35,
+        "welfare": 0.20,
+        "social_policy": 0.05,
+        "governance": 0.20,
+        "environment": 0.05,
+        "national_policy": 0.80
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.10,
+        "social_policy": 0.05,
+        "governance": 0.15,
+        "environment": 0.05,
+        "national_policy": 0.55
+      }
+    },
+    {
+      "persona_id": "persona_20",
+      "ideology_profile": {
+        "economic_policy": 0.20,
+        "welfare": 0.20,
+        "social_policy": 0.05,
+        "governance": 0.45,
+        "environment": 0.10,
+        "national_policy": 0.20
+      },
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.15,
+        "social_policy": 0.05,
+        "governance": 0.40,
+        "environment": 0.10,
+        "national_policy": 0.15
+      }
+    },
+    {
+      "persona_id": "persona_21",
+      "ideology_profile": {
+        "economic_policy": -0.15,
+        "welfare": 0.55,
+        "social_policy": 0.10,
+        "governance": 0.20,
+        "environment": 0.05,
+        "national_policy": 0.15
+      },
+      "priority_weights": {
+        "economic_policy": 0.25,
+        "welfare": 0.40,
+        "social_policy": 0.05,
+        "governance": 0.10,
+        "environment": 0.05,
+        "national_policy": 0.15
+      }
+    },
+    {
+      "persona_id": "persona_22",
+      "ideology_profile": {
+        "economic_policy": 0.45,
+        "welfare": 0.10,
+        "social_policy": 0.10,
+        "governance": 0.35,
+        "environment": 0.15,
+        "national_policy": 0.30
+      },
+      "priority_weights": {
+        "economic_policy": 0.25,
+        "welfare": 0.10,
+        "social_policy": 0.10,
+        "governance": 0.25,
+        "environment": 0.15,
+        "national_policy": 0.15
+      }
+    },
+    {
+      "persona_id": "persona_23",
+      "ideology_profile": {
+        "economic_policy": 0.20,
+        "welfare": 0.10,
+        "social_policy": -0.20,
+        "governance": 0.35,
+        "environment": 0.0,
+        "national_policy": 0.55
+      },
+      "priority_weights": {
+        "economic_policy": 0.10,
+        "welfare": 0.05,
+        "social_policy": 0.15,
+        "governance": 0.25,
+        "environment": 0.05,
+        "national_policy": 0.40
+      }
+    },
+    {
+      "persona_id": "persona_24",
+      "ideology_profile": {
+        "economic_policy": 0.0,
+        "welfare": 0.0,
+        "social_policy": 0.0,
+        "governance": 0.0,
+        "environment": 0.0,
+        "national_policy": 0.0
+      },
+      "priority_weights": {
+        "economic_policy": 0.1666666667,
+        "welfare": 0.1666666667,
+        "social_policy": 0.1666666667,
+        "governance": 0.1666666667,
+        "environment": 0.1666666666,
+        "national_policy": 0.1666666666
+      }
+    },
+    {
+      "persona_id": "persona_25",
+      "ideology_profile": {
+        "economic_policy": -0.30,
+        "welfare": 0.20,
+        "social_policy": 0.55,
+        "governance": -0.45,
+        "environment": 0.15,
+        "national_policy": -0.20
+      },
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.15,
+        "social_policy": 0.20,
+        "governance": 0.25,
+        "environment": 0.10,
+        "national_policy": 0.15
+      }
+    }
+  ]
+}
