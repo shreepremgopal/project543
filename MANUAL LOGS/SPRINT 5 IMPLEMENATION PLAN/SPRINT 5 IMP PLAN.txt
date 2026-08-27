@@ -1,0 +1,1913 @@
+Absolutely. I’ll treat the **Sprint 5 discussion and the Project543 repository direction already established in this project as the working authority**, and I will not invent that the repository says something I cannot currently retrieve. The only uploaded repository-source file available to me here confirms the canonical repository is [Project543 GitHub repository](https://github.com/shreepremgopal/project543?utm_source=chatgpt.com). 
+
+I also want to make one important distinction: the document below is the **Sprint Leader's implementation constitution/design specification**, not a claim that every formula below already exists in the repository. Where the roadmap/GDD leaves implementation mathematics open, I am proposing the design that Sprint 5 should implement.
+
+# PROJECT543 — SPRINT 5
+
+# POLITICAL INTELLIGENCE & ALIGNMENT
+
+## Complete Implementation Constitution — V0.1
+
+**Sprint Leader:** ChatGPT
+**Project:** Project543
+**Target:** V0.1
+**Status:** Pre-implementation specification
+**Priority:** Critical foundational system
+
+---
+
+# 1. Executive Decision
+
+Sprint 5 should **not** be treated as "add ideology."
+
+That would undersell the importance of this sprint.
+
+Sprint 5 should establish the first version of the game's **Political Decision Engine**.
+
+The player should eventually be able to look at a constituency and think:
+
+> "We are ideologically strong here, but our base is weak. This constituency contains a large persuadable bloc. I don't have enough information to know whether we're actually competitive. Should I spend money polling it, or should I invest elsewhere?"
+
+That is the experience we are building toward.
+
+The system therefore has five layers:
+
+```text
+                 POLITICAL WORLD
+                       │
+             ┌─────────▼─────────┐
+             │  IDEOLOGICAL      │
+             │  STRUCTURE        │
+             └─────────┬─────────┘
+                       │
+             ┌─────────▼─────────┐
+             │ PERSONA           │
+             │ PREFERENCES       │
+             └─────────┬─────────┘
+                       │
+             ┌─────────▼─────────┐
+             │ CONSTITUENCY      │
+             │ COMPOSITION       │
+             └─────────┬─────────┘
+                       │
+             ┌─────────▼─────────┐
+             │ POLITICAL         │
+             │ SUPPORT           │
+             └─────────┬─────────┘
+                       │
+             ┌─────────▼─────────┐
+             │ PLAYER            │
+             │ INFORMATION       │
+             └───────────────────┘
+```
+
+The **election system comes later**.
+
+The **economy/campaign system comes later**.
+
+The **AI comes later**.
+
+But all of those systems will eventually depend on this one.
+
+That is why Sprint 5 must be built exceptionally cleanly.
+
+---
+
+# 2. The Central Design Philosophy
+
+The game should follow one fundamental principle:
+
+> **The simulation may be mathematically sophisticated, but the player should only need to understand strategic relationships.**
+
+The player does **not** need to see:
+
+`exp(-λD²)`
+
+The player needs to understand:
+
+> "These voters are highly compatible with our political position."
+
+Likewise, the player does not need to see:
+
+`responsive_pool × constituency_affinity`
+
+They need to understand:
+
+> "We have a weak existing base here, but there is a large persuadable population."
+
+This produces:
+
+### Low cognitive barrier
+
+while retaining:
+
+### Extremely high strategic ceiling.
+
+That is exactly the "easy to start, extremely hard to master" target.
+
+---
+
+# 3. Sprint 5 Objectives
+
+Sprint 5 has **eight objectives**.
+
+## O1 — Establish the political coordinate system
+
+A canonical six-dimensional political space.
+
+## O2 — Establish mathematical persona preferences
+
+Personas receive mathematical salience instead of vague labels.
+
+## O3 — Establish party/persona alignment
+
+Political compatibility becomes calculable.
+
+## O4 — Establish constituency political composition
+
+The 543 constituencies become politically distinct because of their persona distributions.
+
+## O5 — Establish base support
+
+Existing political loyalty becomes distinct from ideological compatibility.
+
+## O6 — Establish current political support
+
+The system produces a deterministic political-support state.
+
+## O7 — Establish explainability
+
+The engine must be capable of explaining *why* it produced a result.
+
+## O8 — Establish information as a strategic resource
+
+Polling becomes the first foundation for the future information economy.
+
+---
+
+# 4. What Sprint 5 Must NOT Do
+
+This is extremely important.
+
+We do **not** implement:
+
+* election winner determination;
+* seat allocation;
+* vote counting;
+* turnout;
+* campaign actions;
+* campaign spending;
+* businesses;
+* fundraising;
+* media;
+* political events;
+* leader charisma;
+* AI campaigning;
+* full turn progression.
+
+Why?
+
+Because those systems should **consume** Sprint 5.
+
+They should not become tangled inside Sprint 5.
+
+---
+
+# 5. Architecture
+
+The architecture should look approximately like:
+
+```text
+PoliticalSystem
+│
+├── IdeologyModel
+│
+├── PersonaModel
+│
+├── AlignmentModel
+│
+├── ConstituencyPoliticalModel
+│
+├── BaseSupportModel
+│
+├── SupportModel
+│
+├── InformationModel
+│
+├── PollingModel
+│
+└── ExplanationModel
+```
+
+No UI code should calculate any of these.
+
+No map script should calculate any of these.
+
+No future election script should duplicate any of these.
+
+---
+
+# 6. The Six-Dimensional Political Space
+
+The canonical dimensions remain:
+
+1. Economic
+2. Welfare
+3. Social
+4. Governance
+5. Environment
+6. National
+
+Each coordinate:
+
+```text
+-1.0 ←────────── 0 ──────────→ +1.0
+```
+
+The exact semantic direction must follow the existing Project543 ideology definitions rather than being silently redefined during implementation.
+
+That distinction matters.
+
+Sprint 5 is an implementation sprint, **not a chance to rewrite the project's political ontology**.
+
+---
+
+# 7. Party Representation
+
+A party receives:
+
+```text
+PartyIdeology:
+    economic
+    welfare
+    social
+    governance
+    environment
+    national
+```
+
+Conceptually:
+
+```text
+P = [e, w, s, g, env, n]
+```
+
+with each coordinate bounded.
+
+Validation must reject invalid ideology vectors.
+
+No silent clamping of invalid source data.
+
+If a developer accidentally enters:
+
+```text
+environment = 1.4
+```
+
+the system should fail loudly during validation.
+
+Not quietly turn it into `1.0`.
+
+That catches defects early.
+
+---
+
+# 8. Persona Representation
+
+Every persona receives:
+
+### Political position
+
+```text
+economic
+welfare
+social
+governance
+environment
+national
+```
+
+and:
+
+### Political salience
+
+```text
+economic_weight
+welfare_weight
+social_weight
+governance_weight
+environment_weight
+national_weight
+```
+
+The six weights must sum to:
+
+```text
+1.0
+```
+
+This is the key transition from prose-driven politics to mathematical politics.
+
+---
+
+# 9. Why Salience Matters
+
+Consider two personas with identical ideology.
+
+Persona A:
+
+```text
+Economic     0.40
+Welfare      0.20
+Social       0.10
+Governance   0.10
+Environment  0.10
+National     0.10
+```
+
+Persona B:
+
+```text
+Economic     0.10
+Welfare      0.10
+Social       0.10
+Governance   0.10
+Environment  0.50
+National     0.10
+```
+
+They occupy the same political location.
+
+But they don't necessarily react equally to ideological disagreement.
+
+That is where depth begins.
+
+---
+
+# 10. Alignment Mathematics
+
+The first Sprint 5 implementation should use a weighted distance.
+
+Let:
+
+```text
+P = party position
+Q = persona position
+w = persona salience
+```
+
+Calculate:
+
+```text
+D = 0.5 × sqrt(
+    Σ wi × (Pi - Qi)²
+)
+```
+
+This normalizes the result approximately to:
+
+```text
+0 ≤ D ≤ 1
+```
+
+Then:
+
+```text
+Alignment = exp(-λD²)
+```
+
+Initial balance parameter:
+
+```text
+λ = 2.0
+```
+
+**Important:** this is a V0.1 balance configuration, not eternal doctrine.
+
+It must live in configuration.
+
+---
+
+# 11. Why This Formula Is Strong
+
+It gives us:
+
+### Exact ideological match
+
+```text
+D = 0
+Alignment = 1
+```
+
+### Moderate difference
+
+Alignment declines gradually.
+
+### Severe difference
+
+Alignment declines strongly.
+
+But it does not create:
+
+> "You are 0.01 away, therefore you suddenly lose 20%."
+
+That matters.
+
+Political systems should not feel like arbitrary cliffs.
+
+---
+
+# 12. A Crucial Architectural Decision
+
+The alignment engine must be replaceable.
+
+Why?
+
+Because multidimensional political preferences can eventually become **non-separable**.
+
+In other words:
+
+> The importance of one political dimension may depend upon another dimension.
+
+A future Project543 model might eventually need:
+
+```text
+distance =
+diagonal salience
++
+cross-dimensional interactions
+```
+
+rather than only independent dimensions.
+
+That is why Sprint 5 should define:
+
+```text
+AlignmentModel
+```
+
+as an abstraction/interface rather than permanently coupling every system to one formula.
+
+Research in political analysis supports the underlying concern: multidimensional preferences can include interaction/non-separability, including models using weighted quadratic forms rather than only simple diagonal weights. ([Cambridge University Press][1])
+
+**Do not implement that advanced model now.**
+
+Build the architecture that can accommodate it later.
+
+---
+
+# 13. Constituency Composition
+
+This is one of the most important decisions in the sprint.
+
+A constituency is not:
+
+```text
+one average voter
+```
+
+It is:
+
+```text
+Persona distribution
+```
+
+For example:
+
+```text
+Persona A  32%
+Persona B  24%
+Persona C  18%
+Persona D  14%
+Persona E   8%
+Persona F   4%
+```
+
+The percentages must total 100%.
+
+---
+
+# 14. The Dangerous Shortcut We Must Avoid
+
+Do **not** calculate:
+
+```text
+constituency ideology
+=
+average(persona ideology)
+```
+
+and then throw away the personas.
+
+That would destroy strategic depth.
+
+Why?
+
+Because:
+
+```text
+50% extreme-left
+50% extreme-right
+```
+
+and:
+
+```text
+100% moderate
+```
+
+can have similar mathematical averages while being radically different political coalitions.
+
+The distributions must remain authoritative.
+
+---
+
+# 15. Constituency Affinity
+
+For party `q`:
+
+```text
+CA(c,q)
+=
+Σ persona_share × persona_alignment
+```
+
+So a constituency's ideological affinity is the weighted aggregate of its actual persona population.
+
+This creates **coalition geometry**.
+
+The player isn't merely asking:
+
+> "Is this constituency left or right?"
+
+They are eventually asking:
+
+> "Which coalition can we assemble here?"
+
+That is much more interesting.
+
+---
+
+# 16. Base Support
+
+Base support is deliberately separate.
+
+A constituency might contain:
+
+```text
+high ideological compatibility
+```
+
+but:
+
+```text
+low existing party loyalty
+```
+
+Another constituency might have:
+
+```text
+mediocre ideological compatibility
+```
+
+but:
+
+```text
+massive historical base
+```
+
+Both should be strategically valuable for different reasons.
+
+---
+
+# 17. Base Support Formula
+
+For party `q`:
+
+```text
+B(c,q) ∈ [0,1]
+```
+
+Total base support:
+
+```text
+Σ B(c,q) ≤ 1
+```
+
+Responsive population:
+
+```text
+R(c) = 1 - Σ B(c,q)
+```
+
+If:
+
+```text
+Σ B(c,q) > 1
+```
+
+the data is invalid.
+
+**Hard failure.**
+
+No automatic normalization.
+
+---
+
+# 18. Political Potential
+
+The first support foundation:
+
+```text
+Potential(c,q)
+=
+B(c,q)
++
+R(c) × CA(c,q)
+```
+
+This gives us two fundamentally different political sources:
+
+```text
+BASE
++
+RESPONSIVE
+```
+
+This distinction will become incredibly useful later.
+
+---
+
+# 19. Current Support
+
+Normalize:
+
+```text
+Support(c,q)
+=
+Potential(c,q)
+/
+Σ Potential(c,k)
+```
+
+Therefore:
+
+```text
+Σ Support(c,q) = 1
+```
+
+This gives us a coherent current political state.
+
+But:
+
+# Support is NOT votes.
+
+That boundary must be preserved.
+
+---
+
+# 20. Why This Separation Is So Important
+
+Future systems can later modify support through separate mechanisms:
+
+```text
+Base
+  ↓
+Ideological affinity
+  ↓
+Campaign effects
+  ↓
+Economic effects
+  ↓
+Events
+  ↓
+Turn dynamics
+  ↓
+Turnout
+  ↓
+Election
+```
+
+We should not turn Sprint 5 into:
+
+```text
+support =
+ideology
++ charisma
++ money
++ campaign
++ turnout
++ economy
++ events
++ random
+```
+
+That becomes unmaintainable.
+
+---
+
+# 21. The Political State Ledger
+
+Every support calculation should produce a machine-readable explanation.
+
+Example:
+
+```text
+Constituency: C042
+
+Party: Party A
+
+Base support:       0.31
+Responsive pool:    0.69
+Affinity:           0.72
+Potential:          0.8068
+Normalized support: 0.401
+```
+
+This should not merely be debug output.
+
+It is the foundation of:
+
+* future UI explanation;
+* debugging;
+* balancing;
+* automated testing;
+* replay;
+* AI reasoning;
+* future modding.
+
+---
+
+# 22. Exceptional Idea #1 — Causal Fingerprints
+
+Every political result gets a deterministic fingerprint.
+
+Conceptually:
+
+```text
+model_version
++
+config_version
++
+party_id
++
+constituency_id
++
+ordered inputs
+```
+
+→ hash.
+
+If something changes unexpectedly, developers can ask:
+
+> "Why did constituency 217 change?"
+
+The fingerprint lets us identify whether:
+
+* input changed;
+* model changed;
+* configuration changed;
+* ordering changed;
+* bug occurred.
+
+This is an exceptionally valuable engineering capability.
+
+---
+
+# 23. Exceptional Idea #2 — The Information Frontier
+
+This should become one of Project543's signature mechanics.
+
+There are two worlds:
+
+### Simulation truth
+
+The engine knows:
+
+```text
+A = 42.1%
+B = 40.7%
+C = 17.2%
+```
+
+### Player knowledge
+
+The player may know:
+
+```text
+A ≈ 40–45%
+B ≈ 38–44%
+C ≈ 13–20%
+```
+
+The difference is:
+
+# Information Frontier.
+
+The player must decide:
+
+> "Do I know enough?"
+
+That is a skill-based strategic question.
+
+---
+
+# 24. Polling
+
+Polling requires money.
+
+That was explicitly chosen.
+
+This is important because it creates:
+
+```text
+Money
+  ↙       ↘
+ACT       LEARN
+```
+
+Spend money campaigning later:
+
+> change political state.
+
+Spend money polling:
+
+> improve knowledge.
+
+That is a genuine strategic trade-off.
+
+---
+
+# 25. Polling Levels
+
+V0.1:
+
+### Basic
+
+Cheap.
+
+Large uncertainty.
+
+### Standard
+
+Expensive.
+
+Moderate uncertainty.
+
+### Deep
+
+Very expensive.
+
+Low uncertainty.
+
+But:
+
+# Never perfect.
+
+---
+
+# 26. Why Polling Must Not Reveal Exact Numbers
+
+If:
+
+```text
+Deep Poll = exact truth
+```
+
+then the game becomes:
+
+> Whoever can afford information gets certainty.
+
+That is not good strategy.
+
+Instead:
+
+```text
+Deep Poll
+=
+better estimate
++
+smaller uncertainty
+```
+
+not:
+
+```text
+Deep Poll = omniscience
+```
+
+Real polling is itself uncertain: sampling error is only one source of uncertainty, with nonresponse, weighting/design effects, noncoverage and measurement also contributing. ([Pew Research Center][2])
+
+---
+
+# 27. Polling Output
+
+A poll should produce:
+
+```text
+CONSTITUENCY
+Turn
+Tier
+Cost
+
+Party A
+Estimate
+Range
+Confidence
+
+Party B
+Estimate
+Range
+Confidence
+
+Party C
+Estimate
+Range
+Confidence
+```
+
+And:
+
+```text
+Freshness
+```
+
+---
+
+# 28. Stale Information
+
+A poll from an earlier political state should not magically update.
+
+It remains a historical observation.
+
+Example:
+
+```text
+Poll: Turn 18
+Current Turn: 22
+
+Status: STALE
+```
+
+The player knows:
+
+> "This was true/estimated four turns ago."
+
+They do not receive fake certainty.
+
+---
+
+# 29. Exceptional Idea #3 — Information Debt
+
+This is a downstream extension, but Sprint 5 should architect for it.
+
+When political conditions change, old information becomes less useful.
+
+The player accumulates:
+
+# Information debt.
+
+Not as an arbitrary penalty.
+
+Simply because:
+
+> **the world has changed while your knowledge has not.**
+
+This is elegant because it naturally creates pressure to refresh intelligence.
+
+---
+
+# 30. Exceptional Idea #4 — Coalition Geometry
+
+The six-dimensional persona model means the player can eventually construct political coalitions.
+
+Imagine:
+
+```text
+Party A
+      ●
+
+Persona cluster
+   ● ● ●
+    ● ●
+
+Persona cluster
+          ● ●
+         ● ●
+```
+
+A party can move its position to capture one coalition while potentially losing another.
+
+This means future political positioning becomes:
+
+> **coalition engineering**
+
+rather than:
+
+> "move slider left/right."
+
+That could become one of Project543's defining strategic characteristics.
+
+---
+
+# 31. Exceptional Idea #5 — Near-Miss Mastery
+
+The game should make players able to diagnose:
+
+> "We lost this constituency by 1.8 points."
+
+Then eventually:
+
+```text
+Why?
+
+Base:          +8.2
+Ideology:      +3.1
+Campaign:      +0.0
+Information:   poor
+Opponent base: -6.0
+```
+
+The player learns.
+
+They improve.
+
+The next election becomes a strategic test.
+
+This creates a **learning loop rather than a retry loop**.
+
+---
+
+# 32. Information Should Never Replace Skill
+
+A master player should sometimes say:
+
+> "I don't need to poll this constituency."
+
+Because the visible evidence is already sufficient.
+
+A weaker player may overspend on polling.
+
+Therefore:
+
+```text
+Polling ≠ mandatory
+```
+
+It is an optional strategic investment.
+
+---
+
+# 33. Map Integration
+
+The map should load the colour of the current leading party, as you specified.
+
+So:
+
+```text
+Political State
+       ↓
+Leading Party
+       ↓
+Party Colour
+       ↓
+Map
+```
+
+The map does not calculate the leader.
+
+The political model does.
+
+---
+
+# 34. Map Information Hierarchy
+
+At minimum:
+
+### Zoomed out
+
+Party colours.
+
+### Constituency selection
+
+Current leader.
+
+### Political detail
+
+Support/margin where information permits.
+
+### Polling
+
+Paid deeper information.
+
+This turns the map into a **strategic dashboard**, not merely a geographic display.
+
+---
+
+# 35. Data Architecture
+
+All balance parameters must be externalized.
+
+Examples:
+
+```text
+alignment_lambda
+poll_basic_cost
+poll_standard_cost
+poll_deep_cost
+poll_basic_uncertainty
+poll_standard_uncertainty
+poll_deep_uncertainty
+stale_after_turns
+```
+
+Never bury these inside procedural code.
+
+---
+
+# 36. Version Everything
+
+The political model should have:
+
+```text
+MODEL_VERSION
+CONFIG_VERSION
+POLLING_MODEL_VERSION
+```
+
+A saved game can therefore know:
+
+> "This political state was calculated using model X/config Y."
+
+That will become extremely important when the simulation evolves across V0.1, V0.2, V0.3, etc.
+
+---
+
+# 37. Determinism
+
+Political truth:
+
+```text
+Truth = F(state, configuration)
+```
+
+must be deterministic.
+
+Polling:
+
+```text
+Poll = G(truth, configuration, seed, context)
+```
+
+must also be reproducible.
+
+Same:
+
+```text state
++
+config
++
+seed
+```
+
+→ same result.
+
+---
+
+# 38. No Hidden Randomness
+
+Do not use unseeded random numbers inside political calculations.
+
+Especially:
+
+* alignment;
+* constituency affinity;
+* base support;
+* support normalization.
+
+Randomness belongs only where uncertainty is intentionally modeled.
+
+---
+
+# 39. Testing Strategy
+
+Sprint 5 must be test-first.
+
+## Ideology tests
+
+### Test 1
+
+Identical vectors:
+
+```text
+distance = 0
+alignment = 1
+```
+
+### Test 2
+
+Maximum separation.
+
+### Test 3
+
+Zero salience dimension.
+
+Changing an issue with:
+
+```text weight = 0
+```
+
+must not affect alignment.
+
+### Test 4
+
+Symmetry.
+
+```text distance(A,B)
+=
+distance(B,A)
+```
+
+---
+
+# 40. Persona Tests
+
+### 100% persona
+
+Constituency affinity must equal that persona's alignment.
+
+### Mixed personas
+
+Affinity must equal weighted aggregation.
+
+### Order invariance
+
+Reordering persona records must not change results.
+
+This catches accidental dictionary-order dependence.
+
+---
+
+# 41. Distribution Tests
+
+Construct:
+
+### Constituency A
+
+100% moderate.
+
+### Constituency B
+
+50% extreme-left + 50% extreme-right.
+
+Same average position.
+
+They must be allowed to produce different political responses.
+
+This test is strategically important.
+
+It proves that we haven't accidentally destroyed the persona distribution.
+
+---
+
+# 42. Base Support Tests
+
+Test:
+
+```text
+0
+```
+
+```text
+0.25
+```
+
+```text
+0.50
+```
+
+```text
+0.99
+```
+
+and invalid:
+
+```text
+1.01
+```
+
+The invalid case must fail.
+
+---
+
+# 43. Support Tests
+
+Verify:
+
+```text
+Σ support = 1
+```
+
+within an explicitly defined floating-point tolerance.
+
+Also verify:
+
+* party order independence;
+* deterministic calculation;
+* no negative support;
+* no NaN;
+* no infinity.
+
+---
+
+# 44. Polling Tests
+
+Must prove:
+
+### Truth immutability
+
+Polling cannot change political support.
+
+### Cost
+
+Correct money is charged.
+
+### Determinism
+
+Same seed = same report.
+
+### Variability
+
+Different contexts can produce different estimates.
+
+### Quality
+
+Higher tier has configuredly lower uncertainty.
+
+### Staleness
+
+Old reports become stale.
+
+### No omniscience
+
+No tier returns exact truth as a guaranteed contract.
+
+---
+
+# 45. Explainability Tests
+
+Every support result must be reconstructable.
+
+Test:
+
+```text
+explanation.recalculate()
+```
+
+against:
+
+```text
+support_model.result
+```
+
+They must agree.
+
+If they don't:
+
+# Sprint 5 fails.
+
+---
+
+# 46. 543-Seat Validation
+
+Do not test only five constituencies.
+
+Do not test only ten.
+
+Run the actual:
+
+# 543 constituencies.
+
+Verify:
+
+```text
+543 valid IDs
+543 valid political profiles
+543 support states
+```
+
+No missing data.
+
+No duplicates.
+
+No invalid values.
+
+---
+
+# 47. Balance Laboratory
+
+This is not optional.
+
+A formula can be mathematically correct and still produce terrible gameplay.
+
+Therefore automatically sweep:
+
+```text λ
+base support
+persona composition
+party ideology
+number of parties
+```
+
+and inspect:
+
+### Failure mode A
+
+Ideology doesn't matter.
+
+### Failure mode B
+
+Ideology determines everything.
+
+### Failure mode C
+
+Base support is unbeatable.
+
+### Failure mode D
+
+All constituencies behave similarly.
+
+### Failure mode E
+
+One persona dominates.
+
+### Failure mode F
+
+Polling is worthless.
+
+### Failure mode G
+
+Polling is mandatory.
+
+### Failure mode H
+
+Polling is effectively omniscience.
+
+### Failure mode I
+
+Tiny ideological changes cause absurd support explosions.
+
+---
+
+# 48. The Balance Target
+
+We don't want:
+
+```text
+Formula wins.
+```
+
+We want:
+
+```text
+Player understands system
+        ↓
+Player identifies opportunity
+        ↓
+Player allocates resources
+        ↓
+Player takes calculated risk
+        ↓
+Player learns from result
+```
+
+That's the gameplay loop.
+
+---
+
+# 49. What Makes This "Hard to Master"
+
+A beginner sees:
+
+> "Party A leads here."
+
+An intermediate player sees:
+
+> "Party A leads, but our ideological compatibility is strong."
+
+An advanced player sees:
+
+> "Party A leads, but their base is weak and this constituency contains a large responsive bloc."
+
+An expert sees:
+
+> "I don't need to poll this one; the observable structure already makes the strategic choice obvious. My money is better spent resolving uncertainty in constituency 217."
+
+That is the progression I want.
+
+---
+
+# 50. What We Should NOT Expose to the Player
+
+Do not expose:
+
+* raw λ;
+* raw weighted-distance formula;
+* normalization denominator;
+* internal random seed;
+* causal fingerprint;
+* implementation details.
+
+Expose:
+
+* compatibility;
+* base strength;
+* competitive status;
+* uncertainty;
+* poll confidence;
+* information freshness.
+
+---
+
+# 51. Error Philosophy
+
+Sprint 4 already taught us an important lesson from the test-runner formatting issue.
+
+Sprint 5 should have:
+
+# Expected output only.
+
+No:
+
+```text
+ERROR:
+```
+
+during successful tests.
+
+No noisy debug traces.
+
+No "PASS" surrounded by irrelevant engine errors.
+
+Successful execution should produce exactly the expected validation output.
+
+---
+
+# 52. Recommended File Responsibility
+
+The implementation should be divided by responsibility.
+
+### `IdeologyDistanceModel`
+
+Only mathematical distance.
+
+### `PersonaAlignmentModel`
+
+Only alignment.
+
+### `ConstituencyPoliticalProfile`
+
+Persona composition and validation.
+
+### `BaseSupportModel`
+
+Base-support data and validation.
+
+### `PoliticalSupportModel`
+
+Combines validated components.
+
+### `PoliticalInformationState`
+
+What the player knows.
+
+### `PollingModel`
+
+Paid estimation.
+
+### `PoliticalExplanation`
+
+Causal reconstruction.
+
+### `PoliticalBalanceConfig`
+
+Tunable constants.
+
+This prevents the dreaded:
+
+```text
+GodScript
+```
+
+where one file eventually controls the entire simulation.
+
+---
+
+# 53. Dependency Direction
+
+The dependency graph should flow downward:
+
+```text
+Configuration
+     ↓
+Ideology
+     ↓
+Alignment
+     ↓
+Persona aggregation
+     ↓
+Support
+     ↓
+Information
+     ↓
+Presentation
+```
+
+Not:
+
+```text
+Map → Support → Persona → UI → Polling → Map
+```
+
+Circular dependencies must be prohibited.
+
+---
+
+# 54. Future Compatibility
+
+Sprint 5 should intentionally leave extension points for:
+
+```text
+Campaign
+Economy
+Events
+Media
+Turn progression
+AI
+Turnout
+Election resolution
+Leader/personality
+Manifestos
+Coalition mechanics
+```
+
+But none should be implemented by smuggling them into Sprint 5.
+
+---
+
+# 55. The Most Important Future Hook
+
+The future support system should conceptually become:
+
+```text
+PoliticalState
+    +
+CampaignState
+    +
+EconomicState
+    +
+EventState
+    +
+InformationState
+        ↓
+TurnResolution
+        ↓
+UpdatedPoliticalState
+```
+
+Sprint 5 supplies the first clean `PoliticalState`.
+
+---
+
+# 56. Sprint 5 Deliverables
+
+At completion, the repository should contain:
+
+### Core domain implementation
+
+The mathematical political model.
+
+### Configuration
+
+All balance constants.
+
+### Fixtures
+
+Small deterministic scenarios.
+
+### Validation runner
+
+Automated Sprint 5 tests.
+
+### 543 integration
+
+Full constituency validation.
+
+### Explanation objects
+
+Machine-readable causal state.
+
+### Polling foundation
+
+Paid uncertainty-based intelligence.
+
+### Map adapter
+
+Current leader/colour state.
+
+### Documentation
+
+Formula and architecture references.
+
+---
+
+# 57. Definition of Done
+
+Sprint 5 is **not done** because:
+
+> "The code runs."
+
+It is done only when all of these are true:
+
+* [ ] six-dimensional ideology works;
+* [ ] persona salience works;
+* [ ] alignment is deterministic;
+* [ ] constituency distributions work;
+* [ ] distributions are not collapsed to averages;
+* [ ] base support works;
+* [ ] support normalizes;
+* [ ] 543 constituencies validate;
+* [ ] explanations reconstruct results;
+* [ ] polling costs money;
+* [ ] polling doesn't mutate truth;
+* [ ] polling has uncertainty;
+* [ ] polling can become stale;
+* [ ] deterministic replay works;
+* [ ] no hidden RNG exists in political truth;
+* [ ] map receives leader state correctly;
+* [ ] balance sweeps pass;
+* [ ] regression passes;
+* [ ] expected output only;
+* [ ] no unexplained errors.
+
+---
+
+# 58. Sprint 5 Acceptance Scenarios
+
+## Scenario A — Ideological match
+
+Party exactly matches persona.
+
+Expected:
+
+```text
+Maximum alignment.
+```
+
+## Scenario B — Ideological conflict
+
+Party is maximally distant.
+
+Expected:
+
+```text
+Very low alignment.
+```
+
+## Scenario C — Polarized constituency
+
+Two opposing persona clusters.
+
+Expected:
+
+```text
+Distribution-sensitive behaviour.
+```
+
+## Scenario D — Strong base
+
+Party has strong existing loyalty.
+
+Expected:
+
+```text
+Base contributes independently of alignment.
+```
+
+## Scenario E — Persuadable constituency
+
+Weak bases, strong compatibility.
+
+Expected:
+
+```text
+Ideological opportunity becomes visible.
+```
+
+## Scenario F — Polling
+
+Player pays for intelligence.
+
+Expected:
+
+```text
+Money decreases.
+Knowledge increases.
+Truth unchanged.
+```
+
+## Scenario G — Stale poll
+
+Political state advances.
+
+Expected:
+
+```text
+Old report remains historical and becomes stale.
+```
+
+---
+
+# 59. Sprint 5 Strategic Outcome
+
+At the end of Sprint 5, Project543 should have crossed an important threshold.
+
+Before:
+
+> The map is a world.
+
+After:
+
+> **The map is a politically structured world.**
+
+A constituency is no longer merely:
+
+```text
+ID 217
+```
+
+It becomes:
+
+```text
+A particular political ecosystem
+with a particular coalition structure,
+a particular ideological relationship
+to every party,
+a particular base-support landscape,
+and a particular information state.
+```
+
+That is the foundation required for the next systems to become strategically meaningful.
+
+---
+
+# 60. Final Sprint Leader Directive
+
+I am **not** recommending that we add twenty flashy mechanics.
+
+The exceptional ideas in this sprint are deliberately architectural:
+
+### 1. Information Frontier
+
+Information becomes a strategic resource.
+
+### 2. Causal Fingerprint
+
+Every political result becomes reproducible and debuggable.
+
+### 3. Coalition Geometry
+
+The six-dimensional persona space becomes the foundation for future coalition-building gameplay.
+
+### 4. Information Debt
+
+Stale knowledge naturally becomes strategically dangerous.
+
+### 5. Distribution Preservation
+
+Constituencies are political ecosystems rather than average voters.
+
+Those five ideas have the potential to influence the entire game's long-term quality.
+
+But we should be disciplined:
+
+> **Only the first three need meaningful implementation foundations in Sprint 5.**
+
+Information Debt and advanced Coalition Geometry should be **architectural hooks**, not scope explosions.
+
+---
+
+# 61. Sprint 5 Constitution in One Sentence
+
+> **Build a deterministic political world in which ideology creates compatibility, personas create coalition structure, base support creates inertia, information creates uncertainty, and the player's strategic understanding—not arbitrary randomness—determines whether they recognize and exploit political opportunity.**
+
+That is the Sprint 5 standard I would enforce as Sprint Leader.
+
+And the canonical repository remains:
+
+[Project543 — GitHub](https://github.com/shreepremgopal/project543?utm_source=chatgpt.com)
+
+**Important implementation constraint:** I will not write directly to that repository. When we move from specification to implementation, I will provide each new file separately and complete replacement files for anything that must be edited, so you can commit/push them yourself.
+
+[1]: https://www.cambridge.org/core/journals/political-analysis/article/multidimensional-spatial-voting-with-nonseparable-preferences/112FA71B889588C52C011CE7CEBBDAF2 "https://www.cambridge.org/core/journals/political-analysis/article/multidimensional-spatial-voting-with-nonseparable-preferences/112FA71B889588C52C011CE7CEBBDAF2"
+[2]: https://www.pewresearch.org/short-reads/2016/09/08/understanding-the-margin-of-error-in-election-polls/ "https://www.pewresearch.org/short-reads/2016/09/08/understanding-the-margin-of-error-in-election-polls/"
