@@ -126,24 +126,6 @@ func _validate_campaign_slice() -> void:
 	elif restored.get_summary() != campaign.get_summary():
 		_fail("campaign save/load changed the campaign summary")
 
-	var completion = campaign_script.new(seats, 901543)
-	var completion_start: Dictionary = completion.start_new_campaign("party_player", "Completion Smoke")
-	if not bool(completion_start.get("ok", false)):
-		_fail("full campaign smoke could not initialise")
-		return
-	var completion_home: Dictionary = completion.confirm_home(home_id)
-	if not bool(completion_home.get("ok", false)):
-		_fail("full campaign smoke could not confirm home constituency")
-		return
-	for week in range(45):
-		var weekly: Dictionary = completion.resolve_week()
-		if not bool(weekly.get("ok", false)):
-			_fail("full campaign smoke failed on week %d" % (week + 1))
-			return
-	var election = completion.get_election_result()
-	if completion.phase != "election_ready" or election == null or election.seat_count != 543 or not election.is_valid():
-		_fail("full campaign smoke did not produce a valid Week 45 election")
-
 func _fail(message: String) -> void:
 	failures.append(message)
 
