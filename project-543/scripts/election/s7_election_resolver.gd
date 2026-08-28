@@ -6,38 +6,7 @@ const INVALID_INPUT := "INVALID_INPUT"
 const NO_PARTIES := "NO_PARTIES"
 const NO_CONSTITUENCIES := "NO_CONSTITUENCIES"
 
-## Deterministic 543-seat election resolution.
-##
-## Expected constituency shape:
-## {
-##   "constituency_id": String,
-##   "personas": Array,
-##   "base_support": Dictionary,
-##   "turnout": float,
-##   "home_party_id": String
-## }
-##
-## Expected persona shape:
-## {
-##   "weight": float,
-##   "ideology": Dictionary
-## }
-##
-## Party shape:
-## {
-##   "party_id": String,
-##   "ideology": Dictionary
-## }
-##
-## Optional constituency support may be supplied as base_support[party_id].
-## Campaign modifiers are read from campaign_state["constituencies"] and may
-## contain per-party support_delta values. All arithmetic is deterministic.
-
-func resolve(
-	parties: Array,
-	constituencies: Array,
-	campaign_state: Dictionary = {}
-) -> Dictionary:
+func resolve(parties: Array, constituencies: Array, campaign_state: Dictionary = {}) -> Dictionary:
 	if parties.is_empty():
 		return _failure(NO_PARTIES, ["at least one party is required"])
 	if constituencies.is_empty():
@@ -62,49 +31,45 @@ func resolve(
 	for constituency in constituencies:
 		if not constituency is Dictionary:
 			return _failure(INVALID_INPUT, ["constituency must be a Dictionary"])
-		var result := _resolve_constituency(
-			constituency,
-			party_ids,
-			party_by_id,
-			campaign_state
-		)
+		var result := _resolve_constituency(constituency, party_ids, party_by_id, campaign_state)
 		if not result.ok:
 			return result
 		results.append(result.constituency)
 		var winner_id: String = result.constituency.winner_party_id
 		seat_totals[winner_id] = int(seat_totals.get(winner_id, 0)) + 1
 
+	var election_result := S7ElectionResult.new()
+	election_result.seat_count = results.size()
+	election_result.constituency_results = results
+	election_result.seat_totals = seat_totals
+	election_result.winner_party_id = _national_winner(seat_totals, party_ids)
 	return {
 		"ok": true,
 		"success": true,
 		"code": RESULT_OK,
-		"seat_count": results.size(),
+		"result": election_result,
+		"seat_count": election_result.seat_count,
 		"constituency_results": results,
 		"seat_totals": seat_totals,
-		"winner_party_id": _national_winner(seat_totals, party_ids)
+		"winner_party_id": election_result.winner_party_id
 	}
 
-
-func _resolve_constituency(
-	constituency: Dictionary,
-	party_ids: Array[String],
-	party_by_id: Dictionary,
-	campaign_state: Dictionary
-) -> Dictionary:
+func _resolve_constituency(constituency: Dictionary, party_ids: Array[String], party_by_id: Dictionary, campaign_state: Dictionary) -> Dictionary:
 	var constituency_id := str(constituency.get("constituency_id", ""))
 	if constituency_id.is_empty():
 		return _failure(INVALID_INPUT, ["constituency_id must not be empty"])
-
 	var personas: Array = constituency.get("personas", [])
 	var base_support: Dictionary = constituency.get("base_support", {})
-	var modifiers: Dictionary = campaign_state.get("constituencies", {}).get(constituency_id, {})
+	var constituency_states: Dictionary = campaign_state.get("constituencies", {})
+	var modifiers: Dictionary = constituency_states.get(constituency_id, {})
+	var support_deltas: Dictionary = modifiers.get("support_delta", {})
 	var turnout := clampf(float(constituency.get("turnout", 1.0)), 0.0, 1.0)
 	var home_party_id := str(constituency.get("home_party_id", ""))
 
 	var votes: Dictionary = {}
 	for party_id in party_ids:
 		var score := float(base_support.get(party_id, 0.0))
-		score += float(modifiers.get("support_delta", {}).get(party_id, 0.0))
+		score += float(support_deltas.get(party_id, 0.0))
 		score += _ideological_score(party_by_id[party_id], personas)
 		if party_id == home_party_id:
 			score += float(constituency.get("home_advantage", 0.0))
@@ -123,7 +88,6 @@ func _resolve_constituency(
 		}
 	}
 
-
 func _ideological_score(party: Dictionary, personas: Array) -> float:
 	if personas.is_empty():
 		return 0.0
@@ -141,9 +105,9 @@ func _ideological_score(party: Dictionary, personas: Array) -> float:
 		var dimensions := 0
 		for key in ideology.keys():
 			if party_ideology.has(key):
-			var delta := float(party_ideology[key]) - float(ideology[key])
-			distance += delta * delta
-			dimensions += 1
+				var delta := float(party_ideology[key]) - float(ideology[key])
+				distance += delta * delta
+				dimensions += 1
 		if dimensions > 0:
 			weighted_score += weight * (1.0 - sqrt(distance / float(dimensions)))
 			total_weight += weight
@@ -151,18 +115,15 @@ func _ideological_score(party: Dictionary, personas: Array) -> float:
 		return 0.0
 	return weighted_score / total_weight
 
-
 func _winner_from_scores(scores: Dictionary, party_ids: Array[String]) -> String:
 	var winner := party_ids[0]
 	var best := float(scores.get(winner, 0.0))
 	for party_id in party_ids:
 		var value := float(scores.get(party_id, 0.0))
-		# Stable party_ids order is the deterministic tie-break rule.
 		if value > best:
 			best = value
 			winner = party_id
 	return winner
-
 
 func _margin(scores: Dictionary, winner: String) -> float:
 	var values: Array[float] = []
@@ -174,15 +135,8 @@ func _margin(scores: Dictionary, winner: String) -> float:
 	values.sort()
 	return float(scores.get(winner, 0.0)) - values.back()
 
-
 func _national_winner(totals: Dictionary, party_ids: Array[String]) -> String:
 	return _winner_from_scores(totals, party_ids)
 
-
 func _failure(code: String, errors: Array = []) -> Dictionary:
-	return {
-		"ok": false,
-		"success": false,
-		"code": code,
-		"errors": errors
-	}
+	return {"ok": false, "success": false, "code": code, "errors": errors}
