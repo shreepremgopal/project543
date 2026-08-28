@@ -1,0 +1,1377 @@
+Absolutely. I’ve now used the **exact roadmap document you linked** as the governing source.
+
+And this gives us a clean mandate for **Sprint 6**:
+
+# Project543 — Sprint 6 Implementation Plan
+
+## Economy & Campaign Model
+
+**Roadmap position:** R4
+**Development philosophy:** System-first → dependency-aware → test-first → integration-driven.
+
+Sprint 6 must **not** become a frontend sprint or an integration sprint.
+
+The roadmap explicitly defines R4 as:
+
+> **money, businesses, income, fundraising, risk, campaign actions, saturation and temporary/permanent effects.**
+
+The implementation must therefore build those systems **independently**, with clean contracts for the later Turn System, Election Engine, AI and eventual Integration Slice.
+
+---
+
+# 1. Sprint 6 Mission
+
+Sprint 6 answers one fundamental gameplay question:
+
+> **How does a political party transform scarce economic resources into campaign influence while managing risk, diminishing returns, uncertainty and long-term consequences?**
+
+This is deliberately **not**:
+
+`Money → Buy action → +Support`
+
+Instead, Sprint 6 should establish the machinery for:
+
+```text
+ECONOMIC CAPACITY
+       ↓
+ available money
+       ↓
+ income / businesses / fundraising
+       ↓
+ strategic budget allocation
+       ↓
+ campaign action
+       ↓
+ reach / influence
+       ↓
+ saturation + diminishing returns
+       ↓
+ temporary / permanent effects
+       ↓
+ risk exposure
+       ↓
+ future consequences
+```
+
+The player should eventually have to make difficult choices.
+
+---
+
+# 2. Sprint 6 Scope
+
+The sprint has eight primary systems.
+
+### S6.1 Money Ledger
+
+### S6.2 Businesses
+
+### S6.3 Income
+
+### S6.4 Fundraising
+
+### S6.5 Risk
+
+### S6.6 Campaign Actions
+
+### S6.7 Saturation
+
+### S6.8 Temporary/Permanent Effects
+
+These are the explicit R4 requirements.
+
+---
+
+# 3. Architectural Principle
+
+Sprint 6 should **not know how the election is ultimately resolved**.
+
+For example, campaign action code should produce something like:
+
+```text
+CampaignEffect
+    target constituency
+    source party
+    magnitude
+    duration
+    risk exposure
+    action type
+    causal metadata
+```
+
+It should **not** directly modify:
+
+```text
+votes
+seats
+winner
+election result
+```
+
+Those belong to R6.
+
+Likewise, Sprint 6 shouldn't implement the 45-week loop. That's R5.
+
+This separation is extremely important.
+
+---
+
+# 4. Money System
+
+## Objective
+
+Create a deterministic financial ledger.
+
+Every money change must have:
+
+```text
+source
+amount
+turn
+reason
+transaction type
+```
+
+Examples:
+
+```text
+INCOME
+FUNDRAISING
+BUSINESS_REVENUE
+CAMPAIGN_SPEND
+PENALTY
+REFUND
+```
+
+No anonymous:
+
+```gdscript
+money += 500
+```
+
+should exist in the authoritative economic system.
+
+Instead:
+
+```text
+record_transaction(...)
+```
+
+should be the controlled gateway.
+
+---
+
+# 5. The Double-Entry-Lite Principle
+
+This is one of the ideas I consider genuinely important.
+
+We don't need a full accounting simulation.
+
+But we **should make every economic event auditable**.
+
+For example:
+
+```text
+Week 14
+
+Starting cash                 £82,400
+
+Business income               +£7,200
+Fundraising                   +£11,000
+
+Manifesto campaign            -£8,000
+Rally                         -£5,000
+
+Ending cash                   £87,600
+```
+
+This gives us:
+
+* deterministic debugging;
+* explainability;
+* future save/load reliability;
+* AI compatibility;
+* economic balance analysis.
+
+And it prevents the classic strategy-game problem where money mysteriously changes.
+
+---
+
+# 6. Businesses
+
+Businesses should not simply be:
+
+```text
+business → +£X every turn
+```
+
+Instead, a business should have an economic identity.
+
+Conceptually:
+
+```text
+Business
+├── business_id
+├── constituency_id
+├── capital/value
+├── operating_income
+├── volatility
+├── political exposure
+├── risk exposure
+└── status
+```
+
+The **R4 scope explicitly requires businesses**, but the roadmap does not specify their detailed numerical model.
+
+Therefore those details should be treated as a Sprint 6 design decision, not silently assumed to be canon.
+
+---
+
+# 7. Income
+
+Income should be deterministic.
+
+A business could produce:
+
+```text
+gross_income
+× operating_factor
+× stability_factor
+= net_income
+```
+
+But avoid excessive simulation.
+
+The goal is strategic depth, **not financial accounting software**.
+
+The player should ultimately care about:
+
+> “How reliable is this source of money?”
+
+rather than:
+
+> “What is the depreciation schedule of this factory?”
+
+---
+
+# 8. Fundraising
+
+Fundraising is potentially one of Sprint 6's most important strategic systems.
+
+The interesting design is that fundraising should have:
+
+### immediate benefit
+
+but potentially:
+
+### future consequences.
+
+A fundraising action could therefore generate:
+
+```text
+cash_now
++
+political_relationship_effect
++
+risk_exposure
+```
+
+This creates an important strategic decision:
+
+> Do I maximize cash today, or preserve strategic freedom later?
+
+---
+
+# 9. The Strategic Budget Constraint
+
+This should become one of the central mathematical properties of the system.
+
+A player should **never be able to optimize every constituency simultaneously**.
+
+Money is the constraint.
+
+Therefore:
+
+```text
+Available Capital
+      ↓
+Strategic Allocation
+      ↓
+Campaign Opportunities
+```
+
+The game becomes fundamentally about **resource allocation under uncertainty**.
+
+That creates genuine strategic depth.
+
+---
+
+# 10. Campaign Actions
+
+R4 explicitly calls for campaign actions.
+
+The architecture should support action types without hard-coding the future election system.
+
+For example:
+
+```text
+CampaignAction
+├── action_id
+├── action_type
+├── party_id
+├── constituency_id
+├── base_cost
+├── intensity
+├── risk
+├── duration
+├── saturation_response
+└── effects
+```
+
+Potential V0.1 action families already preserved by the roadmap's scope include:
+
+* manifestos;
+* rallies;
+* interviews;
+* campaign activity.
+
+The roadmap explicitly preserves manifestos, rallies and interviews in the V0.1 scope.
+
+---
+
+# 11. Cost Should Not Equal Impact
+
+This is a critical balance principle.
+
+We should **not** create:
+
+```text
+£1,000 → 1 influence
+£10,000 → 10 influence
+£100,000 → 100 influence
+```
+
+because then optimal play becomes trivial:
+
+> Spend everything everywhere.
+
+Instead:
+
+```text
+cost ↑
+     ↓
+marginal effectiveness ↓
+```
+
+This gives money diminishing strategic efficiency.
+
+---
+
+# 12. Saturation
+
+Saturation is explicitly required by R4.
+
+This is an opportunity for one of Sprint 6's most valuable mechanics.
+
+Imagine:
+
+```text
+First campaign contact:
+high impact
+
+Second:
+good impact
+
+Third:
+moderate impact
+
+Fourth:
+small impact
+
+Fifth:
+almost negligible
+
+Sixth:
+potential backlash
+```
+
+This means:
+
+> **More campaigning is not necessarily better campaigning.**
+
+That immediately creates strategic allocation.
+
+---
+
+# 13. Saturation Should Be Local
+
+Do not make saturation global.
+
+A party campaigning heavily in one constituency should not automatically become saturated everywhere.
+
+Instead:
+
+```text
+Party
+  ↓
+Constituency
+  ↓
+Action type
+  ↓
+Saturation
+```
+
+Potentially even:
+
+```text
+Party
+× Constituency
+× Action Family
+```
+
+This produces a much richer strategic space.
+
+A player might discover:
+
+> “We've exhausted rallies here. Stop spending money on rallies and switch to interviews.”
+
+That is considerably more interesting than a global campaign meter.
+
+---
+
+# 14. Temporary Effects
+
+Temporary effects are effects with explicit duration.
+
+Example:
+
+```text
+Rally
+→ +campaign influence
+→ duration = 2 turns
+```
+
+The effect should carry:
+
+```text
+start_turn
+duration
+remaining_duration
+magnitude
+source
+```
+
+No hidden timers.
+
+---
+
+# 15. Permanent Effects
+
+Permanent effects are different.
+
+For example:
+
+```text
+long-term organizational presence
+reputation
+structural relationship
+business development
+```
+
+The critical distinction:
+
+### Temporary
+
+changes the current strategic state.
+
+### Permanent
+
+changes the future baseline.
+
+This creates compounding strategic decisions.
+
+---
+
+# 16. The Brilliant Mechanic: Strategic Memory
+
+This is one of the few ideas I believe could materially improve Project543.
+
+Campaign actions should leave **causal traces**.
+
+Not merely:
+
+```text
+support +0.04
+```
+
+but:
+
+```text
+Party A
+→ Rally
+→ Constituency X
+→ turn 17
+→ cost £4,000
+→ generated temporary campaign effect
+→ increased exposure
+→ partially saturated rally channel
+```
+
+This allows later systems to answer:
+
+> **Why is this constituency behaving differently?**
+
+It also becomes incredibly valuable for AI.
+
+---
+
+# 17. Risk
+
+Risk must not simply be:
+
+```text
+random chance of failure
+```
+
+That would violate one of our most important design principles:
+
+> **Reward skill over luck.**
+
+Instead, risk should be:
+
+```text
+exposure
+× vulnerability
+× action characteristics
+```
+
+with deterministic resolution where possible.
+
+Randomness can exist later as a controlled uncertainty mechanism, but it should never dominate strategy.
+
+---
+
+# 18. Risk Budget
+
+A player should effectively manage two resources:
+
+### Money
+
+and
+
+### Risk capacity.
+
+This is potentially a very strong strategic layer.
+
+A player might have:
+
+```text
+£120,000 cash
+
+but only moderate tolerance for additional exposure.
+```
+
+They then have to decide:
+
+> Do I use safe low-impact campaigning, or attempt an aggressive strategy with greater upside and greater future consequences?
+
+That's strategy.
+
+---
+
+# 19. Risk Should Be Asymmetric
+
+A particularly useful design:
+
+```text
+Low-risk action
+→ reliable modest outcome
+
+Medium-risk action
+→ stronger possible outcome
+
+High-risk action
+→ potentially transformative outcome
+→ serious downside
+```
+
+But crucially:
+
+**the player should understand the risk profile.**
+
+We should never create casino gameplay disguised as strategy.
+
+---
+
+# 20. Deterministic Risk
+
+For V0.1, I recommend:
+
+```text
+same state
++
+same action
++
+same seed/version
+=
+same resolution
+```
+
+This gives reproducibility.
+
+It also allows us to run:
+
+> “What if I had chosen action B?”
+
+later through simulation tooling without introducing nondeterministic debugging nightmares.
+
+---
+
+# 21. Economic Feedback Loop
+
+The deeper architecture becomes:
+
+```text
+Businesses
+      ↓
+Income
+      ↓
+Available Capital
+      ↓
+Campaign
+      ↓
+Risk / Effects
+      ↓
+Political Position
+      ↓
+Future Opportunities
+      ↓
+Economic Capacity
+```
+
+That creates an actual **strategic economy**, rather than a money counter.
+
+---
+
+# 22. No Direct Election Coupling
+
+Sprint 6 should expose campaign effects through an interface.
+
+Something like:
+
+```text
+CampaignResolution
+```
+
+containing:
+
+```text
+party
+target
+cost
+effects
+risk
+duration
+saturation
+causal metadata
+```
+
+R6 can later consume those effects.
+
+This keeps R4 independent.
+
+---
+
+# 23. Proposed Domain Objects
+
+The exact final names should be aligned with the repository's existing naming conventions before implementation.
+
+Conceptually:
+
+```text
+MoneyLedger
+MoneyTransaction
+
+Business
+BusinessState
+
+IncomeRecord
+
+FundraisingAction
+FundraisingResult
+
+RiskProfile
+RiskExposure
+
+CampaignAction
+CampaignActionResult
+
+CampaignEffect
+EffectRegistry
+
+SaturationState
+```
+
+And potentially:
+
+```text
+EconomicState
+CampaignState
+```
+
+if those canonical entities don't already exist from R2.
+
+The roadmap explicitly says R2 establishes canonical **Business and Campaign State** representations.
+
+Therefore Sprint 6 should **extend the canonical R2 entities**, not create competing representations.
+
+---
+
+# 24. State Ownership
+
+A strict ownership model:
+
+```text
+EconomicState
+    owns money/business/income/fundraising state
+
+CampaignState
+    owns actions/effects/saturation/risk exposure
+
+Political Model
+    owns ideological/persona calculations
+
+Turn System
+    later owns timing/resolution order
+
+Election Engine
+    later owns final vote/seat resolution
+```
+
+This will save us from an enormous integration problem later.
+
+---
+
+# 25. Testing Strategy
+
+Every system must be independently testable.
+
+### Money tests
+
+* positive income;
+* spending;
+* insufficient funds;
+* exact balance;
+* transaction conservation;
+* deterministic ledger.
+
+### Business tests
+
+* valid business;
+* income generation;
+* invalid values;
+* inactive business;
+* deterministic output.
+
+### Fundraising tests
+
+* cost;
+* proceeds;
+* net result;
+* risk;
+* repeated fundraising.
+
+### Campaign tests
+
+* valid action;
+* invalid action;
+* cost;
+* target;
+* effect;
+* duration.
+
+### Saturation tests
+
+* first action;
+* repeated action;
+* diminishing return;
+* threshold;
+* saturation isolation by constituency.
+
+### Effect tests
+
+* temporary creation;
+* expiry;
+* permanent persistence;
+* stacking rules.
+
+### Risk tests
+
+* low/medium/high profiles;
+* deterministic resolution;
+* exposure accumulation;
+* risk limits.
+
+---
+
+# 26. Property Tests
+
+Beyond individual examples, we should test invariants.
+
+For example:
+
+### Money conservation
+
+```text
+starting_money
++ income
++ fundraising
+- spending
+= ending_money
+```
+
+### No negative money
+
+unless overdraft is explicitly designed.
+
+### Saturation monotonicity
+
+Repeated identical actions should not unexpectedly become *more* effective without a defined mechanic.
+
+### Temporary expiry
+
+An effect must disappear exactly when its duration ends.
+
+### Permanent persistence
+
+Permanent effects must survive future turns.
+
+### Determinism
+
+Identical state + identical action must produce identical output.
+
+---
+
+# 27. Anti-Exploit Testing
+
+This is critical.
+
+We should deliberately attempt to break the economy.
+
+### Exploit A
+
+Fundraise infinitely.
+
+### Exploit B
+
+Spend money and somehow refund it.
+
+### Exploit C
+
+Stack temporary effects indefinitely.
+
+### Exploit D
+
+Reset saturation.
+
+### Exploit E
+
+Move effects between constituencies.
+
+### Exploit F
+
+Create negative costs.
+
+### Exploit G
+
+Generate money through circular transactions.
+
+### Exploit H
+
+Repeat an action to create exponential impact.
+
+Sprint 6 isn't complete until these are tested.
+
+---
+
+# 28. Balance Framework
+
+We should **not balance around one "ideal" player.**
+
+Instead test strategic archetypes:
+
+### Economic optimizer
+
+Maximize capital.
+
+### Aggressive campaigner
+
+Spend heavily.
+
+### Conservative strategist
+
+Preserve money and risk.
+
+### Regional specialist
+
+Concentrate resources.
+
+### Broad campaigner
+
+Spread resources.
+
+### High-risk strategist
+
+Accept exposure for potential upside.
+
+The system should ensure none becomes universally dominant.
+
+---
+
+# 29. The Most Important Balance Rule
+
+There should be **no universally correct campaign action**.
+
+If:
+
+```text
+Rally > Interview > Manifesto
+```
+
+under every possible state,
+
+then the system is broken.
+
+Instead:
+
+```text
+action effectiveness =
+state × constituency × saturation × risk × timing
+```
+
+That creates a strategic decision.
+
+---
+
+# 30. Campaign Opportunity Cost
+
+This should become fundamental.
+
+If the player spends:
+
+```text
+£20,000
+```
+
+here, they cannot spend it elsewhere.
+
+The game should make the opportunity cost meaningful.
+
+That creates:
+
+> **“Where should I campaign?”**
+
+rather than:
+
+> **“Should I campaign?”**
+
+That's a much stronger strategy game.
+
+---
+
+# 31. Regional Strategy
+
+Because Project543 contains **543 constituencies**, economic allocation can eventually produce geographical strategy.
+
+The system should allow:
+
+```text
+concentrated investment
+```
+
+versus:
+
+```text
+national dispersion
+```
+
+without directly deciding which is better.
+
+That is exactly the kind of emergent strategic choice we want.
+
+---
+
+# 32. Information Asymmetry
+
+Sprint 6 should not expose every economic consequence perfectly.
+
+The underlying simulation knows everything.
+
+The eventual player interface can selectively reveal:
+
+```text
+cost
+expected effect
+risk profile
+saturation state
+```
+
+while hiding deeper causal information until appropriate.
+
+This connects beautifully with Sprint 5's information architecture without requiring Sprint 6 to become an integration sprint.
+
+---
+
+# 33. AI Compatibility
+
+Even though AI is R7, Sprint 6 should be built so that AI can call the exact same actions.
+
+Never create:
+
+```text
+PlayerCampaignAction
+```
+
+and later:
+
+```text
+AICampaignAction
+```
+
+Instead:
+
+```text
+CampaignActionEngine
+       ↑
+       ├── Player
+       └── AI
+```
+
+This is crucial.
+
+---
+
+# 34. Save/Load Compatibility
+
+Although save/load isn't the focus of R4, state should be serializable.
+
+Every major state object should have deterministic:
+
+```text
+to_dictionary()
+from_dictionary()
+```
+
+or the project's established serialization equivalent.
+
+This avoids rebuilding the economy architecture during R9/R11.
+
+---
+
+# 35. Versioning
+
+Every deterministic economic calculation should carry:
+
+```text
+model_version
+config_version
+```
+
+This will become extremely useful during balancing.
+
+If we change the formula later:
+
+```text
+economy-v0.1
+```
+
+becomes:
+
+```text
+economy-v0.2
+```
+
+and we can distinguish old simulation results from new ones.
+
+---
+
+# 36. Configuration vs Logic
+
+Another major architectural rule:
+
+**Don't bury balance constants throughout GDScript.**
+
+Separate:
+
+```text
+logic
+```
+
+from:
+
+```text
+balance configuration
+```
+
+So we can tune:
+
+```text
+campaign cost
+saturation curve
+risk coefficient
+income multiplier
+fundraising efficiency
+effect duration
+```
+
+without rewriting the engine.
+
+---
+
+# 37. A Potentially Exceptional Mechanic: Efficiency Frontier
+
+This is one of the few “special” ideas I would actually recommend exploring.
+
+For every campaign investment, calculate:
+
+```text
+marginal influence gained
+        /
+money spent
+```
+
+But don't expose this directly to the player as a perfect optimization number.
+
+Internally it gives us a way to identify:
+
+> **where the next £1 is most strategically valuable.**
+
+The player can learn this through experience.
+
+That creates an emergent optimization game.
+
+---
+
+# 38. Another High-Value Mechanic: Saturation Switching
+
+Suppose:
+
+```text
+Rallies:
+high initial effectiveness
+high saturation
+
+Interviews:
+moderate effectiveness
+low saturation
+
+Manifestos:
+slow effect
+persistent effect
+```
+
+Then an expert player learns:
+
+> Don't keep pushing the same channel.
+
+Instead:
+
+```text
+Rally → Rally → Interview → Manifesto
+```
+
+This creates strategic sequencing.
+
+Not button spam.
+
+---
+
+# 39. Campaign Sequencing
+
+That leads to a broader idea:
+
+**The order of actions matters.**
+
+For example:
+
+```text
+Manifesto
+→ Rally
+```
+
+could be strategically different from:
+
+```text
+Rally
+→ Manifesto
+```
+
+But Sprint 6 should expose the machinery for this rather than hard-code arbitrary bonuses.
+
+Later political and turn systems can exploit it.
+
+---
+
+# 40. Sprint 6 Definition of Done
+
+Sprint 6 is complete only when:
+
+### Architecture
+
+* canonical economic state exists;
+* canonical campaign state exists;
+* no duplicated competing representations;
+* clean boundaries exist.
+
+### Economy
+
+* money ledger works;
+* businesses work;
+* income works;
+* fundraising works.
+
+### Campaign
+
+* campaign actions work;
+* costs work;
+* effects work;
+* temporary effects work;
+* permanent effects work;
+* saturation works;
+* risk works.
+
+### Engineering
+
+* deterministic;
+* serializable;
+* versioned;
+* validated;
+* test-covered.
+
+### Strategic
+
+* opportunity cost exists;
+* diminishing returns exist;
+* repeated actions are not dominant;
+* different strategies produce different outcomes;
+* no obvious infinite-money exploit.
+
+### Integration readiness
+
+The later R5/R6/R7 systems can consume Sprint 6 outputs **without modifying Sprint 6's core logic**.
+
+---
+
+# 41. What Sprint 6 Must NOT Build
+
+This is equally important.
+
+Do **not** implement:
+
+❌ 45-week turn loop
+❌ two-actions-per-week resolution
+❌ final election calculation
+❌ winner determination
+❌ seat totals
+❌ AI decision-making
+❌ full 543 campaign
+❌ final presentation/UI polish
+❌ tutorial
+❌ final map result colouring
+
+Those belong to later roadmap stages. R5 handles the turn/resolution system, R6 the election engine, R7 AI, R8 integration, R9 full campaign and R11 presentation.
+
+---
+
+# 42. Sprint 6 Execution Sequence
+
+I recommend:
+
+```text
+S6-A
+Audit R2/R3 contracts
+        ↓
+S6-B
+Economic state + money ledger
+        ↓
+S6-C
+Businesses + income
+        ↓
+S6-D
+Fundraising
+        ↓
+S6-E
+Risk framework
+        ↓
+S6-F
+Campaign action framework
+        ↓
+S6-G
+Effects
+        ↓
+S6-H
+Saturation
+        ↓
+S6-I
+Deterministic resolution
+        ↓
+S6-J
+Serialization/versioning
+        ↓
+S6-K
+Exploit + balance tests
+        ↓
+S6-L
+Sprint acceptance
+```
+
+**No frontend integration is required for the sprint's definition of done.**
+
+---
+
+# 43. The Sprint 6 Constitution
+
+If I had to compress the entire sprint into five rules:
+
+> **1. Money is scarce.**
+
+> **2. Spending is an allocation decision, not a button press.**
+
+> **3. More campaigning does not always mean more influence.**
+
+> **4. Risk must create strategy, not gambling.**
+
+> **5. Every campaign consequence must be deterministic, explainable and reusable by future systems.**
+
+That gives R4 a very strong foundation.
+
+---
+
+## Final Sprint Leader recommendation
+
+I would classify **Economy & Campaign** as one of the project's most strategically important foundational systems.
+
+The roadmap deliberately places it **before** the Turn System, Election Engine and AI. That's correct: those later systems need a robust economic/campaign substrate to operate against.
+
+And I would **not add any “revolutionary” mechanics just for the sake of novelty**. The exceptional ideas above are included only where they reinforce the core objective: **deep tactical decision-making with deterministic, skill-rewarding systems**.
+
+The truly important innovation isn't a gimmick.
+
+It's the combination:
+
+**scarce capital + asymmetric risk + local saturation + temporary/permanent consequences + opportunity cost + deterministic causality.**
+
+If we get those interactions right, the eventual player won't simply ask:
+
+> “What should I click?”
+
+They'll ask:
+
+> **“Where is my next unit of money most strategically valuable, what am I sacrificing by spending it there, how much risk can I absorb, and what position will that leave me in three turns from now?”**
+
+**That is the kind of strategic depth Sprint 6 should manufacture.**
+
+Repository:
+
+[Project543 GitHub repository](https://github.com/shreepremgopal/project543?utm_source=chatgpt.com)
+
+The roadmap remains the governing authority, and it explicitly preserves the full V0.1 scope rather than reducing it.
