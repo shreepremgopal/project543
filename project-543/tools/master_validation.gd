@@ -1,5 +1,7 @@
 extends SceneTree
 
+const PollingModelScript = preload("res://scripts/domain/polling_model.gd")
+
 var failures: Array[String] = []
 var warnings: Array[String] = []
 var checked_scripts := 0
@@ -115,12 +117,13 @@ func _validate_campaign_slice() -> void:
 		return
 
 	var before_poll_money := int(campaign.get_summary().get("money", 0))
-	var poll := campaign.conduct_poll(home_id, int(PollingModel.Tier.BASIC))
+	var poll := campaign.conduct_poll(home_id, int(PollingModelScript.Tier.BASIC))
 	if not bool(poll.get("ok", false)) or int(campaign.get_summary().get("money", 0)) != before_poll_money - 10000:
 		_fail("paid polling did not use the audited campaign ledger")
 
 func _fail(message: String) -> void:
 	failures.append(message)
+	print("::error title=Project 543 validation::" + message)
 
 func _print_report() -> void:
 	print("PROJECT 543 MASTER VALIDATION")
