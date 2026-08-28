@@ -1,0 +1,1338 @@
+Yes. I checked the repository **again against the latest commit**, and Sprint 6 is now genuinely represented in the repo as an implemented/tested system.
+
+The latest commit is:
+
+**`602a113b26c7ef5d00057948cb7649f2fa409ced`**
+**“Sprint 6 economy all tests pass with proper implementation”**.
+
+I also inspected the implementation rather than relying only on the commit message. The commit introduces the Sprint 6 business model and campaign-action infrastructure, including validation, income calculation, serialization, campaign costs, intensity, risk, duration and saturation handling.
+
+So **Sprint 6 → accepted baseline.**
+
+Now we can move to **Sprint 7**.
+
+---
+
+# PROJECT543 — SPRINT 7 MASTER IMPLEMENTATION PLAN
+
+## R5 — TURN & RESOLUTION SYSTEM
+
+### Sprint Leader's Directive
+
+**Sprint 7 is not a UI sprint.**
+
+It is not an election sprint.
+
+It is not an AI sprint.
+
+It is the **temporal operating system of Project543**.
+
+The roadmap sequence is now:
+
+```text
+R3 Political Model
+       ↓
+R4 Economy & Campaign Model
+       ↓
+R5 TURN & RESOLUTION SYSTEM   ← SPRINT 7
+       ↓
+R6 Election Engine
+       ↓
+R7 AI Strategy
+       ↓
+R8 Integration Slice
+```
+
+This ordering is deliberate.
+
+The political system tells us **what the political world is**.
+
+The economy/campaign system tells us **what the player can do**.
+
+Sprint 7 must determine:
+
+> **WHEN things happen, in what order, what gets resolved, what persists, and what the next strategic state becomes.**
+
+That sounds simple.
+
+It isn't.
+
+If we get this system wrong, almost every subsequent system becomes harder to reason about.
+
+If we get it right, R6 and R7 become dramatically cleaner.
+
+---
+
+# 1. Sprint 7 Mission
+
+Create a deterministic, testable, extensible **turn-resolution engine** capable of running Project543's campaign timeline according to the established roadmap rules.
+
+The roadmap specifies the V0.1 campaign structure around:
+
+* **45 weeks**
+* **2 actions per week**
+* weekly resolution
+* deterministic state progression
+* clear system boundaries.
+
+Those rules must become executable contracts, rather than being scattered through UI or gameplay scripts.
+
+---
+
+# 2. The Core Principle
+
+The most important architectural rule for Sprint 7:
+
+> **A turn is not a button click. A turn is a state transition.**
+
+We should therefore model:
+
+```text
+STATE N
+   +
+PLAYER ACTIONS
+   ↓
+VALIDATION
+   ↓
+RESOLUTION
+   ↓
+EFFECT APPLICATION
+   ↓
+EXPIRY
+   ↓
+INCOME
+   ↓
+STATE N+1
+```
+
+The player pressing **“Next Week”** merely requests that transition.
+
+It does not itself perform arbitrary game logic.
+
+---
+
+# 3. Canonical Timeline
+
+Create one authoritative campaign clock.
+
+Conceptually:
+
+```text
+CampaignTimeline
+
+week = 1..45
+actions_per_week = 2
+actions_remaining = 0..2
+```
+
+Do not let individual systems maintain their own week counters.
+
+There must be exactly **one authoritative timeline**.
+
+---
+
+# 4. Campaign Phases
+
+I recommend explicitly representing the campaign lifecycle:
+
+```text
+PRE_CAMPAIGN
+ACTIVE
+ELECTION
+COMPLETED
+```
+
+Even if V0.1 currently only requires the active campaign period, establishing the lifecycle now avoids later architectural surgery.
+
+---
+
+# 5. Week State
+
+A week should be an explicit concept.
+
+Conceptually:
+
+```text
+WeekState
+├── week_number
+├── actions_allowed
+├── actions_used
+├── actions_remaining
+├── resolved
+└── resolution_id
+```
+
+This makes the system auditable.
+
+---
+
+# 6. Two Actions Per Week
+
+The rule should be enforced by the engine.
+
+Not the UI.
+
+Not `main.gd`.
+
+Not a button being disabled.
+
+The authoritative engine must reject:
+
+```text
+third action in same week
+```
+
+with a deterministic reason.
+
+Example:
+
+```text
+TURN_ACTION_LIMIT_REACHED
+```
+
+---
+
+# 7. Action Queue
+
+This is one of the most important design decisions.
+
+Do **not** immediately mutate the world every time an action is clicked.
+
+Instead:
+
+```text
+Player selects action
+       ↓
+Action validated
+       ↓
+Action committed
+       ↓
+Action enters weekly queue
+       ↓
+Resolution occurs
+```
+
+This gives us a clean distinction between:
+
+### intent
+
+and
+
+### consequence.
+
+That distinction will become extremely valuable when R6 and R7 arrive.
+
+---
+
+# 8. Action Commitment
+
+Once an action is committed:
+
+```text
+action_id
+party_id
+target
+parameters
+turn
+sequence
+```
+
+should become immutable.
+
+This prevents mysterious retroactive changes.
+
+---
+
+# 9. Action Ordering
+
+If two actions happen during the same week, ordering must be explicit.
+
+For example:
+
+```text
+Action 1
+Action 2
+```
+
+not:
+
+> “Godot happened to process these in this order.”
+
+Use an explicit sequence number.
+
+```text
+sequence = 1
+sequence = 2
+```
+
+This gives deterministic replay.
+
+---
+
+# 10. Resolution Pipeline
+
+I recommend this canonical pipeline:
+
+```text
+BEGIN WEEK
+    ↓
+Validate queued actions
+    ↓
+Commit economic costs
+    ↓
+Resolve action effects
+    ↓
+Apply political/campaign effects
+    ↓
+Update risk
+    ↓
+Update saturation
+    ↓
+Apply income/business results
+    ↓
+Expire temporary effects
+    ↓
+Generate resolution report
+    ↓
+Advance week
+```
+
+The exact ordering of income/effect expiry should be encoded as an explicit contract and tested—not left implicit.
+
+---
+
+# 11. Why Resolution Ordering Matters
+
+Consider:
+
+```text
+temporary effect expires
+```
+
+Does it expire:
+
+### before
+
+or
+
+### after
+
+the week's action?
+
+Those produce different games.
+
+The engine must make this unambiguous.
+
+---
+
+# 12. Resolution Stages
+
+I recommend an enum-style stage system:
+
+```text
+ACTION_VALIDATION
+ECONOMIC_COMMIT
+CAMPAIGN_RESOLUTION
+POLITICAL_EFFECT_APPLICATION
+RISK_UPDATE
+SATURATION_UPDATE
+INCOME_RESOLUTION
+EXPIRY
+WEEK_FINALIZATION
+```
+
+This gives us an extremely clean debugging surface.
+
+---
+
+# 13. Determinism
+
+This is non-negotiable.
+
+Given:
+
+```text
+same initial state
+same actions
+same configuration
+same model version
+```
+
+the engine must produce:
+
+```text
+identical final state
+```
+
+every time.
+
+This should be tested aggressively.
+
+---
+
+# 14. Resolution ID
+
+Every resolved week should receive a unique deterministic identifier.
+
+Conceptually:
+
+```text
+campaign_id
++
+week
++
+state_version
+```
+
+→ resolution ID.
+
+This lets us trace:
+
+> “Why did the world change?”
+
+---
+
+# 15. The Resolution Record
+
+Every weekly resolution should produce a structured object:
+
+```text
+ResolutionRecord
+├── resolution_id
+├── week
+├── actions
+├── transactions
+├── effects_added
+├── effects_expired
+├── income
+├── risk_changes
+├── saturation_changes
+├── state_before
+├── state_after
+└── model/config versions
+```
+
+This is a **major strategic infrastructure asset**.
+
+It will later power:
+
+* explainability;
+* replay;
+* debugging;
+* AI analysis;
+* UI history;
+* balance analysis.
+
+---
+
+# 16. Strategic Replay
+
+One of my strongest recommendations for Sprint 7:
+
+Build the engine so that a campaign can eventually be replayed from its action history.
+
+That means:
+
+```text
+initial state
++
+action log
+=
+campaign state
+```
+
+This is enormously valuable.
+
+It allows us later to answer:
+
+> “What if the player had chosen the other action?”
+
+without rebuilding the simulation manually.
+
+---
+
+# 17. Immutable Action History
+
+Never destroy historical actions.
+
+Store them.
+
+For example:
+
+```text
+Week 12
+Action 1: Rally — Constituency 183
+Action 2: Interview — Constituency 421
+```
+
+That becomes the campaign's strategic history.
+
+---
+
+# 18. Event Log
+
+I recommend an append-only event model:
+
+```text
+CampaignEvent
+├── event_type
+├── week
+├── sequence
+├── source
+├── target
+├── payload
+└── model_version
+```
+
+Potential events:
+
+```text
+ACTION_COMMITTED
+ACTION_RESOLVED
+MONEY_SPENT
+INCOME_RECEIVED
+EFFECT_CREATED
+EFFECT_EXPIRED
+RISK_CHANGED
+SATURATION_CHANGED
+WEEK_RESOLVED
+```
+
+This is much stronger than relying on mutable state alone.
+
+---
+
+# 19. State vs Events
+
+We should retain both:
+
+```text
+Current State
+```
+
+and
+
+```text
+Historical Events
+```
+
+State answers:
+
+> “Where am I?”
+
+Events answer:
+
+> “How did I get here?”
+
+That distinction will become extremely powerful for Project543.
+
+---
+
+# 20. The Brilliant Idea: Causal Timeline
+
+I recommend every meaningful weekly consequence retain a causal chain:
+
+```text
+Action
+ ↓
+Cost
+ ↓
+Campaign effect
+ ↓
+Risk/saturation
+ ↓
+Political consequence
+```
+
+The system shouldn't merely say:
+
+> Support changed.
+
+It should be capable of saying:
+
+> Support changed because of these resolved effects originating from these actions.
+
+This will eventually make Project543 extraordinarily explainable.
+
+---
+
+# 21. No Hidden Mutation
+
+Sprint 7 should impose a strict rule:
+
+> **Systems do not secretly mutate another system's state.**
+
+For example:
+
+Campaign Engine:
+
+```text
+creates campaign effect
+```
+
+Political Model:
+
+```text
+interprets political consequence
+```
+
+Economy:
+
+```text
+records financial transaction
+```
+
+Turn Engine:
+
+```text
+orchestrates timing
+```
+
+This preserves the roadmap's system-first architecture.
+
+---
+
+# 22. Turn Engine as Orchestrator
+
+The Turn Engine should not become a giant god-class.
+
+It should coordinate:
+
+```text
+TurnEngine
+   ├── Timeline
+   ├── ActionQueue
+   ├── ResolutionPipeline
+   └── EventLog
+```
+
+while delegating domain work.
+
+---
+
+# 23. Transaction Safety
+
+If an action costs £10,000:
+
+```text
+money deduction
+```
+
+must happen atomically.
+
+We don't want:
+
+```text
+money deducted
+action resolution fails
+```
+
+leaving the campaign corrupted.
+
+Either:
+
+```text
+transaction succeeds
+```
+
+or:
+
+```text
+transaction does not commit.
+```
+
+---
+
+# 24. Resolution Atomicity
+
+A weekly resolution should be conceptually transactional.
+
+```text
+state_before
+       ↓
+resolve
+       ↓
+validate resulting state
+       ↓
+commit
+```
+
+If an invariant fails:
+
+```text
+reject resolution
+```
+
+rather than leaving half-resolved state.
+
+---
+
+# 25. Failure Codes
+
+Never rely on human-readable strings alone.
+
+Define machine-readable reasons.
+
+Examples:
+
+```text
+INVALID_PHASE
+INVALID_WEEK
+ACTION_LIMIT_REACHED
+INVALID_ACTION
+INSUFFICIENT_FUNDS
+INVALID_TARGET
+DUPLICATE_ACTION
+RESOLUTION_ALREADY_COMPLETE
+STATE_CORRUPTED
+```
+
+This will be invaluable later.
+
+---
+
+# 26. Campaign End
+
+At week 45:
+
+```text
+ACTIVE
+   ↓
+CAMPAIGN_COMPLETE
+```
+
+But importantly:
+
+**do not determine election winner here.**
+
+R5 ends the campaign timeline.
+
+R6 owns election resolution.
+
+That boundary must be enforced.
+
+---
+
+# 27. Election Handoff Contract
+
+At campaign completion, R5 should emit something conceptually like:
+
+```text
+ElectionReadyState
+├── final political state
+├── final campaign effects
+├── final economic state
+├── final risk state
+├── final constituency states
+├── action history
+└── resolution history
+```
+
+R6 consumes this.
+
+R5 does not decide:
+
+```text
+winner
+seats
+vote totals
+```
+
+---
+
+# 28. Early Termination
+
+The engine should support a terminal campaign state even if V0.1 doesn't expose many early termination cases.
+
+For example:
+
+```text
+CANCELLED
+COMPLETED
+ELECTION_READY
+```
+
+But don't invent gameplay reasons for early termination unless the roadmap requires them.
+
+The architecture can support it without adding unnecessary V0.1 mechanics.
+
+---
+
+# 29. Save/Load
+
+Sprint 7 is the natural place to make the campaign timeline serializable.
+
+We need to preserve:
+
+```text
+current week
+actions remaining
+queued actions
+resolved actions
+state
+effects
+event history
+model versions
+```
+
+A loaded campaign must produce exactly the same future result as an uninterrupted campaign.
+
+---
+
+# 30. The Deterministic Resume Test
+
+One of the strongest tests:
+
+```text
+Campaign A:
+run continuously → week 20
+
+Campaign B:
+run → week 10
+save
+load
+continue → week 20
+```
+
+Expected:
+
+```text
+State A == State B
+Event history A == Event history B
+```
+
+This should be mandatory.
+
+---
+
+# 31. Configuration
+
+Turn constants should live in configuration:
+
+```text
+campaign_weeks = 45
+actions_per_week = 2
+```
+
+not scattered throughout scripts.
+
+This gives us future-version flexibility.
+
+---
+
+# 32. Versioning
+
+Resolution records should retain:
+
+```text
+turn_model_version
+economy_model_version
+political_model_version
+config_version
+```
+
+This is increasingly important now that we have multiple simulation systems.
+
+---
+
+# 33. Testing Matrix
+
+Sprint 7 testing should be extensive.
+
+### Timeline
+
+* starts correctly;
+* week increments;
+* cannot exceed campaign duration;
+* cannot resolve week 0;
+* cannot resolve after completion.
+
+### Actions
+
+* zero actions;
+* one action;
+* two actions;
+* third action rejected;
+* ordering preserved;
+* invalid action rejected.
+
+### Resolution
+
+* deterministic;
+* atomic;
+* all stages execute;
+* stage ordering preserved;
+* effects applied;
+* effects expire.
+
+### Economy
+
+* costs correctly recorded;
+* income correctly recorded;
+* insufficient funds rejected;
+* ledger conserved.
+
+### Effects
+
+* temporary effects expire;
+* permanent effects persist;
+* duration handled correctly;
+* stacking preserved.
+
+### Persistence
+
+* save/load;
+* resumed simulation;
+* historical log preserved.
+
+### Boundary
+
+* week 45;
+* post-campaign state;
+* R6 handoff.
+
+---
+
+# 34. Property Tests
+
+We should test invariants such as:
+
+### Action invariant
+
+```text
+actions_used <= actions_per_week
+```
+
+### Timeline invariant
+
+```text
+1 <= week <= 45
+```
+
+### Resolution invariant
+
+```text
+resolved_week cannot be resolved twice
+```
+
+### Determinism invariant
+
+```text
+same inputs → same outputs
+```
+
+### History invariant
+
+```text
+committed actions are never silently lost
+```
+
+---
+
+# 35. Fault Injection
+
+We should intentionally test:
+
+* null state;
+* invalid action;
+* invalid target;
+* invalid turn;
+* malformed event;
+* insufficient funds;
+* duplicate resolution;
+* corrupted serialized state;
+* invalid configuration.
+
+The engine must fail **cleanly and explicitly**.
+
+---
+
+# 36. The Anti-God-Class Rule
+
+Sprint 7 is particularly vulnerable to one architectural failure:
+
+```text
+TurnManager.gd
+```
+
+becoming 1,500 lines and knowing everything.
+
+We must prevent that.
+
+If a method starts doing:
+
+```text
+economy calculation
++
+political calculation
++
+campaign calculation
++
+UI update
++
+save operation
+```
+
+it belongs elsewhere.
+
+---
+
+# 37. Frontend Boundary
+
+The frontend should eventually call:
+
+```text
+turn_engine.commit_action(...)
+turn_engine.resolve_week(...)
+```
+
+It should **not** manually execute:
+
+```text
+economy.spend()
+campaign.apply()
+political.update()
+```
+
+The UI requests state transitions.
+
+The domain determines them.
+
+This is essential.
+
+---
+
+# 38. Future AI Boundary
+
+R7 should eventually be able to use:
+
+```text
+TurnEngine
+```
+
+exactly like the player.
+
+The AI should submit actions.
+
+It should not bypass the turn system.
+
+That gives us fair AI.
+
+---
+
+# 39. A Particularly Powerful Future Capability
+
+If the architecture is correct, we can eventually implement:
+
+```text
+Simulation Branching
+```
+
+Conceptually:
+
+```text
+Current State
+   ├── Action A → simulated future
+   ├── Action B → simulated future
+   └── Action C → simulated future
+```
+
+The actual player won't necessarily get this capability directly.
+
+But internally, this gives future AI and balance tooling extraordinary power.
+
+This is one of the reasons deterministic state transitions are so valuable.
+
+---
+
+# 40. Strategic Depth Through Time
+
+Sprint 7 shouldn't create arbitrary complexity.
+
+Its contribution to depth is:
+
+> **Actions have temporal consequences.**
+
+A decision isn't merely:
+
+```text
++X today.
+```
+
+It becomes:
+
+```text
+cost today
+→ effect
+→ duration
+→ saturation
+→ risk
+→ future state
+```
+
+This is where Sprint 5 + Sprint 6 begin becoming strategically meaningful.
+
+---
+
+# 41. What Sprint 7 Must NOT Do
+
+Absolutely no:
+
+❌ election winner calculation
+❌ seat allocation
+❌ AI strategy
+❌ full 543 integration
+❌ final frontend redesign
+❌ tutorial
+❌ final map presentation
+❌ balancing every system globally
+
+Those belong to later roadmap stages.
+
+---
+
+# 42. Suggested File Architecture
+
+Before implementation, inspect the existing repository naming conventions and extend them rather than blindly creating these exact names.
+
+Conceptually:
+
+```text
+scripts/
+    turn/
+        turn_engine.gd
+        campaign_timeline.gd
+        week_state.gd
+        action_queue.gd
+        resolution_pipeline.gd
+        resolution_record.gd
+        campaign_event.gd
+        turn_config.gd
+```
+
+and:
+
+```text
+tests/
+    sprint7_test_runner.gd
+```
+
+If equivalent infrastructure already exists, **extend it rather than duplicate it.**
+
+---
+
+# 43. Sprint 7 Implementation Phases
+
+### Phase A — Contract Audit
+
+Inspect:
+
+* R2 canonical state;
+* Sprint 5 political outputs;
+* Sprint 6 economy/campaign outputs;
+* serialization contracts.
+
+**No coding until ownership is clear.**
+
+### Phase B — Timeline
+
+Implement:
+
+```text
+CampaignTimeline
+WeekState
+TurnConfig
+```
+
+### Phase C — Action Queue
+
+Implement:
+
+```text
+ActionQueue
+ActionCommitment
+```
+
+### Phase D — Resolution
+
+Implement:
+
+```text
+ResolutionPipeline
+ResolutionRecord
+```
+
+### Phase E — Event History
+
+Implement:
+
+```text
+CampaignEvent
+EventLog
+```
+
+### Phase F — Persistence
+
+Implement serialization/resume.
+
+### Phase G — Boundary Tests
+
+Test R4 → R5 → future R6 handoff.
+
+### Phase H — Fault/Property Testing
+
+Attack the engine.
+
+### Phase I — Acceptance
+
+Only declare Sprint 7 complete when all contracts pass.
+
+---
+
+# 44. Sprint 7 Acceptance Standard
+
+I would set the bar unusually high.
+
+Sprint 7 is **PASS** only if:
+
+```text
+45-week campaign
+       +
+2 actions/week
+       +
+deterministic resolution
+       +
+atomic state transitions
+       +
+economic integration
+       +
+campaign integration
+       +
+effect lifecycle
+       +
+event history
+       +
+save/load
+       +
+future election handoff
+```
+
+all operate correctly.
+
+---
+
+# 45. The Three Things I Care About Most
+
+If we have to prioritize engineering effort, these are the three:
+
+### **1. Determinism**
+
+No unexplained state changes.
+
+### **2. Temporal correctness**
+
+No ambiguity about when something happens.
+
+### **3. System isolation**
+
+R5 orchestrates; it doesn't swallow R3/R4/R6.
+
+---
+
+# 46. My “Exceptional Idea” — The Campaign Time Machine
+
+This is the only major experimental idea I would seriously consider introducing at the architectural level.
+
+Not as a player-facing feature yet.
+
+Build the engine so that the campaign is fundamentally:
+
+```text
+InitialState
++
+OrderedActionHistory
++
+DeterministicResolution
+=
+CurrentState
+```
+
+That means the engine can theoretically:
+
+```text
+REPLAY
+BRANCH
+COMPARE
+AUDIT
+```
+
+a campaign.
+
+Later, this could enable an extraordinarily powerful post-election analysis:
+
+> **“What actually caused your defeat?”**
+
+The game could reconstruct:
+
+```text
+You spent £X
+on constituency A
+instead of constituency B
+during week 17.
+
+That decision altered...
+```
+
+We don't implement that full feature in Sprint 7.
+
+We simply build the architecture that makes it possible.
+
+**That is the kind of foundational decision that can change the eventual ceiling of Project543 without bloating V0.1.**
+
+---
+
+# 47. Sprint 7 Constitution
+
+I would put this at the top of the implementation document:
+
+> **THE TURN SYSTEM SHALL BE THE SINGLE AUTHORITATIVE TEMPORAL ORCHESTRATOR OF PROJECT543.**
+>
+> **NO SYSTEM MAY SECRETLY ADVANCE TIME.**
+>
+> **NO ACTION MAY BYPASS VALIDATION.**
+>
+> **NO RESOLUTION MAY PRODUCE UNTRACKED STATE MUTATION.**
+>
+> **IDENTICAL INPUT STATE AND ACTION HISTORY SHALL PRODUCE IDENTICAL RESULTS.**
+>
+> **R5 SHALL RESOLVE THE CAMPAIGN TIMELINE, BUT SHALL NOT DETERMINE THE ELECTION RESULT.**
+
+That is the constitutional core of Sprint 7.
+
+---
+
+# Final Sprint Leader Assessment
+
+Sprint 6 gave Project543 **resources and agency**.
+
+Sprint 7 now gives those decisions **time and consequence**.
+
+That's why I would be extremely conservative about adding flashy mechanics here.
+
+The truly exceptional engineering opportunity is to make the temporal layer **so deterministic, auditable and causally structured** that when we eventually reach:
+
+**R6 Election Engine → R7 AI → R8 Integration**
+
+we don't have a tangled game.
+
+We have a simulation platform.
+
+And then the 543-seat campaign can emerge from that platform.
+
+**Current authoritative baseline:** Sprint 6 commit `602a113b26c7ef5d00057948cb7649f2fa409ced`.
+
+Repository:
+
+[Project543 GitHub repository](https://github.com/shreepremgopal/project543?utm_source=chatgpt.com)
+
+**Important:** per your project rule, I will not write or commit these Sprint 7 files into the main repository. When we move to implementation, I will provide each new file separately and each replacement file in complete form for you to download/copy and commit yourself.
