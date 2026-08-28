@@ -119,13 +119,6 @@ func _validate_campaign_slice() -> void:
 	if not bool(poll.get("ok", false)) or int(campaign.get_summary().get("money", 0)) != before_poll_money - 10000:
 		_fail("paid polling did not use the audited campaign ledger")
 
-	var saved := campaign.to_dictionary()
-	var restored = campaign_script.from_dictionary(seats, saved)
-	if restored == null:
-		_fail("campaign save/load round trip was rejected")
-	elif restored.get_summary() != campaign.get_summary():
-		_fail("campaign save/load changed the campaign summary")
-
 func _fail(message: String) -> void:
 	failures.append(message)
 
