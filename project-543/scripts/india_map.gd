@@ -5,6 +5,8 @@ signal constituency_selected(seat: Dictionary)
 signal constituency_hovered(seat: Dictionary)
 signal constituency_cleared()
 
+var political_state: PoliticalState
+var political_party_registry: PartyRegistry
 
 const DATA_PATH := "res://data/generated/india_ls_seats_543_runtime.geojson"
 
@@ -89,18 +91,7 @@ func _ready() -> void:
 	_build_geometry_cache()
 
 	_update_view_transform(true)
-	var panel := get_node_or_null(
-		"HUD/Panel"
-	)
-
-	if panel != null:
-		constituency_selected.connect(
-			panel.show_constituency
-		)
-
-		constituency_cleared.connect(
-			panel.clear_constituency
-		)
+	
 	queue_redraw()
 
 
@@ -667,6 +658,13 @@ func _find_seat_at_screen_position(
 				return index
 
 	return -1
+func bind_political_state(
+	state_value: PoliticalState,
+	party_registry_value: PartyRegistry
+) -> void:
+	political_state = state_value
+	political_party_registry = party_registry_value
+	queue_redraw()
 
 
 func _draw() -> void:
@@ -705,6 +703,7 @@ func _draw() -> void:
 					line_width / max(view_scale, 0.25),
 					true
 				)
+
 
 
 func _validate_seats() -> bool:

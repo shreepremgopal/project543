@@ -20,7 +20,6 @@ func _init(
 	)
 
 	state = PoliticalState.new()
-
 	party_registry = PartyRegistry.new()
 	persona_registry = PersonaRegistry.new()
 	constituency_registry = ConstituencyRegistry.new()
@@ -48,23 +47,10 @@ func calculate_all_bound() -> Dictionary:
 	)
 
 
-
-func _init(
-	config_value: PoliticalBalanceConfig = null
-) -> void:
-	config = (
-		config_value
-		if config_value != null
-		else PoliticalBalanceConfig.new()
-	)
-
-	state = PoliticalState.new()
-
-
 func calculate_constituency(
 	constituency: Constituency,
-	party_registry: PartyRegistry,
-	persona_registry: PersonaRegistry
+	party_registry_value: PartyRegistry,
+	persona_registry_value: PersonaRegistry
 ) -> Dictionary:
 	if constituency == null:
 		return {}
@@ -78,15 +64,15 @@ func calculate_constituency(
 	var base_support := (
 		_get_constituency_base_support(
 			constituency.unique_id,
-			party_registry
+			party_registry_value
 		)
 	)
 
 	var result := (
 		PoliticalSupportModel.calculate(
 			constituency.unique_id,
-			party_registry,
-			persona_registry,
+			party_registry_value,
+			persona_registry_value,
 			profile,
 			base_support,
 			config
@@ -103,34 +89,36 @@ func calculate_constituency(
 
 
 func calculate_all(
-	constituency_registry: ConstituencyRegistry,
-	party_registry: PartyRegistry,
-	persona_registry: PersonaRegistry
+	constituency_registry_value: ConstituencyRegistry,
+	party_registry_value: PartyRegistry,
+	persona_registry_value: PersonaRegistry
 ) -> Dictionary:
 	var results := {}
 
-	if constituency_registry == null:
+	if (
+		constituency_registry_value == null
+		or party_registry_value == null
+		or persona_registry_value == null
+	):
 		return results
 
-	for constituency_id in constituency_registry.ids():
+	for constituency_id in constituency_registry_value.ids():
 		var constituency := (
-			constituency_registry.get_constituency(
+			constituency_registry_value.get_constituency(
 				constituency_id
 			)
 		)
 
 		var result := calculate_constituency(
 			constituency,
-			party_registry,
-			persona_registry
+			party_registry_value,
+			persona_registry_value
 		)
 
 		if result.is_empty():
 			return {}
 
-		results[
-			constituency_id
-		] = result
+		results[constituency_id] = result
 
 	return results
 
@@ -140,13 +128,13 @@ func poll_constituency(
 	party_id: String,
 	tier: PollingModel.Tier,
 	seed: int,
-	party_registry: PartyRegistry
+	party_registry_value: PartyRegistry
 ) -> Dictionary:
-	if party_registry == null:
+	if party_registry_value == null:
 		return {}
 
 	var party_state := (
-		party_registry.get_state(
+		party_registry_value.get_state(
 			party_id
 		)
 	)
@@ -207,13 +195,16 @@ func get_leader(
 
 func _get_constituency_base_support(
 	constituency_id: String,
-	party_registry: PartyRegistry
+	party_registry_value: PartyRegistry
 ) -> Dictionary:
 	var result := {}
 
-	for party_id in party_registry.ids():
+	if party_registry_value == null:
+		return result
+
+	for party_id in party_registry_value.ids():
 		var party_state := (
-			party_registry.get_state(
+			party_registry_value.get_state(
 				party_id
 			)
 		)
