@@ -33,7 +33,12 @@ func _validate_required_assets() -> void:
 		"res://scripts/turn/s7_turn_engine.gd",
 		"res://scripts/turn/s7_resolution_pipeline.gd",
 		"res://scripts/turn/s7_action_commitment.gd",
-		"res://scripts/turn/election_ready_state.gd"
+		"res://scripts/turn/election_ready_state.gd",
+		"res://scripts/campaign/campaign_balance_config.gd",
+		"res://scripts/campaign/campaign_coordinator.gd",
+		"res://scripts/election/election_engine.gd",
+		"res://data/campaign/campaign_balance_v0_1.json",
+		"res://data/personas/persona_catalogue_v0_1.json"
 	]
 	for path in required:
 		if not FileAccess.file_exists(path):
@@ -84,6 +89,29 @@ func _validate_core_contracts() -> void:
 			_fail("543-seat GeoJSON appears empty or truncated")
 		if not text.contains("FeatureCollection"):
 			warnings.append("543-seat GeoJSON does not expose a FeatureCollection marker; runtime loader must validate its schema")
+
+	_validate_campaign_slice()
+
+func _validate_campaign_slice() -> void:
+	var campaign_script = load("res://scripts/campaign/campaign_coordinator.gd")
+	if campaign_script == null:
+		return
+	var seats := GISDataLoader.new().load_seats("res://data/generated/india_ls_seats_543_runtime.geojson")
+	var campaign = campaign_script.new(seats, 543051)
+	var started: Dictionary = campaign.start_new_campaign("party_player", "Validation Party")
+	if not bool(started.get("ok", false)):
+		_fail("campaign coordinator could not initialise the 543-seat world")
+		return
+	if seats.is_empty():
+		return
+	var home_id := String(seats[0].get("unique_id", ""))
+	var home: Dictionary = campaign.confirm_home(home_id)
+	if not bool(home.get("ok", false)):
+		_fail("campaign coordinator could not confirm a home constituency")
+		return
+	var projection = campaign.get_projection()
+	if projection == null or projection.seat_count != 543 or not projection.is_valid():
+		_fail("campaign coordinator did not produce a valid 543-seat projection")
 
 func _fail(message: String) -> void:
 	failures.append(message)

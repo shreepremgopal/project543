@@ -1,471 +1,585 @@
 {
   "schema_version": 1,
-  "catalogue_status": "IDENTITIES_APPROVED_NUMERICAL_VALUES_UNRESOLVED",
-  "source": "IMP DOCS/GDD/GDD.txt, section 9",
+  "catalogue_status": "GAMEPLAY_BOOTSTRAP_NUMERICAL_VALUES",
+  "source": "IMP DOCS/GDD/GDD.txt, section 9; deterministic bootstrap for Project 543 v0.1",
   "personas": [
     {
       "persona_id": "persona_01",
-      "display_name": "Economic Growth Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
+        "economic_policy": 0.75,
+        "welfare": -0.25,
+        "social_policy": 0.05,
+        "governance": 0.15,
         "environment": 0.0,
-        "national_policy": 0.0
+        "national_policy": 0.35
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.4,
+        "welfare": 0.2,
+        "social_policy": 0.1,
+        "governance": 0.1,
+        "environment": 0.1,
+        "national_policy": 0.1
+      },
+      "display_name": "Economic Growth Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_02",
-      "display_name": "Welfare Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": -0.35,
+        "welfare": 0.8,
+        "social_policy": 0.1,
+        "governance": 0.1,
+        "environment": 0.05,
+        "national_policy": 0.05
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.45,
+        "social_policy": 0.1,
+        "governance": 0.1,
+        "environment": 0.1,
+        "national_policy": 0.1
+      },
+      "display_name": "Welfare Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_03",
-      "display_name": "Public Services Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": -0.2,
+        "welfare": 0.65,
+        "social_policy": 0.05,
+        "governance": 0.3,
+        "environment": 0.1,
+        "national_policy": 0.05
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.35,
+        "social_policy": 0.05,
+        "governance": 0.25,
+        "environment": 0.1,
+        "national_policy": 0.1
+      },
+      "display_name": "Public Services Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_04",
-      "display_name": "Low-Tax Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": 0.85,
+        "welfare": -0.55,
+        "social_policy": 0.05,
+        "governance": 0.1,
+        "environment": -0.05,
+        "national_policy": 0.2
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.5,
+        "welfare": 0.2,
+        "social_policy": 0.05,
+        "governance": 0.1,
+        "environment": 0.05,
+        "national_policy": 0.1
+      },
+      "display_name": "Low-Tax Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_05",
-      "display_name": "Employment Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": 0.35,
+        "welfare": 0.25,
+        "social_policy": 0.05,
+        "governance": 0.2,
+        "environment": 0.05,
+        "national_policy": 0.2
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.3,
+        "welfare": 0.2,
+        "social_policy": 0.05,
+        "governance": 0.2,
+        "environment": 0.05,
+        "national_policy": 0.2
+      },
+      "display_name": "Employment Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_06",
-      "display_name": "Infrastructure Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
+        "economic_policy": 0.45,
+        "welfare": 0.15,
         "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "governance": 0.35,
+        "environment": 0.05,
+        "national_policy": 0.25
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.25,
+        "welfare": 0.1,
+        "social_policy": 0.05,
+        "governance": 0.3,
+        "environment": 0.05,
+        "national_policy": 0.25
+      },
+      "display_name": "Infrastructure Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_07",
-      "display_name": "Governance Reform Focused",
       "ideology_profile": {
         "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "welfare": 0.1,
+        "social_policy": 0.1,
+        "governance": 0.85,
+        "environment": 0.05,
+        "national_policy": 0.15
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.1,
+        "social_policy": 0.1,
+        "governance": 0.5,
+        "environment": 0.05,
+        "national_policy": 0.15
+      },
+      "display_name": "Governance Reform Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_08",
-      "display_name": "Stability Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
+        "economic_policy": 0.15,
+        "welfare": 0.15,
+        "social_policy": 0.15,
+        "governance": 0.55,
         "environment": 0.0,
-        "national_policy": 0.0
+        "national_policy": 0.45
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.1,
+        "social_policy": 0.1,
+        "governance": 0.25,
+        "environment": 0.05,
+        "national_policy": 0.4
+      },
+      "display_name": "Stability Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_09",
-      "display_name": "Anti-Corruption Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": -0.1,
+        "welfare": 0.15,
+        "social_policy": 0.15,
+        "governance": 0.9,
+        "environment": 0.1,
+        "national_policy": 0.15
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.1,
+        "social_policy": 0.1,
+        "governance": 0.5,
+        "environment": 0.1,
+        "national_policy": 0.1
+      },
+      "display_name": "Anti-Corruption Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_10",
-      "display_name": "Environmental Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
+        "economic_policy": -0.15,
+        "welfare": 0.3,
+        "social_policy": 0.2,
+        "governance": 0.15,
+        "environment": 0.9,
         "national_policy": 0.0
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.15,
+        "social_policy": 0.1,
+        "governance": 0.1,
+        "environment": 0.5,
+        "national_policy": 0.05
+      },
+      "display_name": "Environmental Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_11",
-      "display_name": "Rural Development Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": 0.2,
+        "welfare": 0.25,
+        "social_policy": 0.05,
+        "governance": 0.1,
+        "environment": 0.25,
+        "national_policy": 0.35
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.25,
+        "social_policy": 0.05,
+        "governance": 0.1,
+        "environment": 0.2,
+        "national_policy": 0.25
+      },
+      "display_name": "Rural Development Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_12",
-      "display_name": "Urban Development Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": 0.3,
+        "welfare": 0.2,
+        "social_policy": 0.15,
+        "governance": 0.25,
+        "environment": 0.15,
+        "national_policy": 0.1
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.2,
+        "welfare": 0.15,
+        "social_policy": 0.15,
+        "governance": 0.2,
+        "environment": 0.2,
+        "national_policy": 0.1
+      },
+      "display_name": "Urban Development Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_13",
-      "display_name": "Small Business Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
+        "economic_policy": 0.7,
         "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
+        "social_policy": 0.05,
+        "governance": 0.2,
         "environment": 0.0,
-        "national_policy": 0.0
+        "national_policy": 0.25
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.45,
+        "welfare": 0.1,
+        "social_policy": 0.05,
+        "governance": 0.15,
+        "environment": 0.05,
+        "national_policy": 0.2
+      },
+      "display_name": "Small Business Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_14",
-      "display_name": "Industrial Growth Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
+        "economic_policy": 0.75,
+        "welfare": 0.1,
         "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "governance": 0.15,
+        "environment": -0.05,
+        "national_policy": 0.4
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.4,
+        "welfare": 0.1,
+        "social_policy": 0.05,
+        "governance": 0.1,
+        "environment": 0.05,
+        "national_policy": 0.3
+      },
+      "display_name": "Industrial Growth Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_15",
-      "display_name": "Social Reform Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": -0.25,
+        "welfare": 0.4,
+        "social_policy": 0.8,
+        "governance": 0.15,
+        "environment": 0.2,
+        "national_policy": -0.05
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.2,
+        "social_policy": 0.45,
+        "governance": 0.1,
+        "environment": 0.1,
+        "national_policy": 0.05
+      },
+      "display_name": "Social Reform Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_16",
-      "display_name": "Traditional Values Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": 0.15,
+        "welfare": 0.1,
+        "social_policy": -0.65,
+        "governance": 0.2,
+        "environment": -0.05,
+        "national_policy": 0.55
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.1,
+        "social_policy": 0.4,
+        "governance": 0.1,
+        "environment": 0.05,
+        "national_policy": 0.25
+      },
+      "display_name": "Traditional Values Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_17",
-      "display_name": "Education Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": -0.1,
+        "welfare": 0.4,
+        "social_policy": 0.25,
+        "governance": 0.3,
+        "environment": 0.2,
+        "national_policy": 0.05
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.25,
+        "social_policy": 0.15,
+        "governance": 0.2,
+        "environment": 0.2,
+        "national_policy": 0.1
+      },
+      "display_name": "Education Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_18",
-      "display_name": "Healthcare Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
+        "economic_policy": -0.25,
+        "welfare": 0.7,
+        "social_policy": 0.15,
+        "governance": 0.15,
+        "environment": 0.15,
         "national_policy": 0.0
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.45,
+        "social_policy": 0.1,
+        "governance": 0.1,
+        "environment": 0.2,
+        "national_policy": 0.05
+      },
+      "display_name": "Healthcare Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_19",
-      "display_name": "National Development Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": 0.35,
+        "welfare": 0.2,
+        "social_policy": 0.05,
+        "governance": 0.2,
+        "environment": 0.05,
+        "national_policy": 0.8
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.1,
+        "social_policy": 0.05,
+        "governance": 0.15,
+        "environment": 0.05,
+        "national_policy": 0.55
+      },
+      "display_name": "National Development Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_20",
-      "display_name": "Local Development Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": 0.2,
+        "welfare": 0.2,
+        "social_policy": 0.05,
+        "governance": 0.45,
+        "environment": 0.1,
+        "national_policy": 0.2
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.15,
+        "social_policy": 0.05,
+        "governance": 0.4,
+        "environment": 0.1,
+        "national_policy": 0.15
+      },
+      "display_name": "Local Development Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_21",
-      "display_name": "Cost-of-Living Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": -0.15,
+        "welfare": 0.55,
+        "social_policy": 0.1,
+        "governance": 0.2,
+        "environment": 0.05,
+        "national_policy": 0.15
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.25,
+        "welfare": 0.4,
+        "social_policy": 0.05,
+        "governance": 0.1,
+        "environment": 0.05,
+        "national_policy": 0.15
+      },
+      "display_name": "Cost-of-Living Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_22",
-      "display_name": "Technology & Innovation Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": 0.45,
+        "welfare": 0.1,
+        "social_policy": 0.1,
+        "governance": 0.35,
+        "environment": 0.15,
+        "national_policy": 0.3
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.25,
+        "welfare": 0.1,
+        "social_policy": 0.1,
+        "governance": 0.25,
+        "environment": 0.15,
+        "national_policy": 0.15
+      },
+      "display_name": "Technology & Innovation Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_23",
-      "display_name": "Public Safety Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
+        "economic_policy": 0.2,
+        "welfare": 0.1,
+        "social_policy": -0.2,
+        "governance": 0.35,
         "environment": 0.0,
-        "national_policy": 0.0
+        "national_policy": 0.55
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1,
+        "welfare": 0.05,
+        "social_policy": 0.15,
+        "governance": 0.25,
+        "environment": 0.05,
+        "national_policy": 0.4
+      },
+      "display_name": "Public Safety Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_24",
-      "display_name": "Balanced Policy",
       "ideology_profile": {
         "economic_policy": 0.0,
         "welfare": 0.0,
@@ -474,33 +588,44 @@
         "environment": 0.0,
         "national_policy": 0.0
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.1666666667,
+        "welfare": 0.1666666667,
+        "social_policy": 0.1666666667,
+        "governance": 0.1666666667,
+        "environment": 0.1666666666,
+        "national_policy": 0.1666666666
+      },
+      "display_name": "Balanced Policy",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     },
     {
       "persona_id": "persona_25",
-      "display_name": "Protest / Change Focused",
       "ideology_profile": {
-        "economic_policy": 0.0,
-        "welfare": 0.0,
-        "social_policy": 0.0,
-        "governance": 0.0,
-        "environment": 0.0,
-        "national_policy": 0.0
+        "economic_policy": -0.3,
+        "welfare": 0.2,
+        "social_policy": 0.55,
+        "governance": -0.45,
+        "environment": 0.15,
+        "national_policy": -0.2
       },
-      "priority_weights": {},
-      "has_turnout_tendency": false,
-      "turnout_tendency": 0.0,
-      "approved": false,
+      "priority_weights": {
+        "economic_policy": 0.15,
+        "welfare": 0.15,
+        "social_policy": 0.2,
+        "governance": 0.25,
+        "environment": 0.1,
+        "national_policy": 0.15
+      },
+      "display_name": "Protest / Change Focused",
+      "approved": true,
       "provenance": {
-        "source": "GDD V0.1",
-        "status": "identity_approved_values_unresolved"
+        "source": "GDD V0.1 / deterministic gameplay bootstrap",
+        "status": "gameplay_bootstrap"
       }
     }
   ]

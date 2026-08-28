@@ -64,12 +64,22 @@ var view_scale := 1.0
 var selected_seat_index := -1
 var hovered_seat_index := -1
 
+# Presentation-only political overlay. The simulation remains owned by the
+# campaign coordinator; this node receives immutable display snapshots.
+var campaign_leaders: Dictionary = {}
+var campaign_party_colours: Dictionary = {}
+var campaign_home_id := ""
+var campaign_result_mode := false
+
 var is_panning := false
 var last_mouse_position := Vector2.ZERO
 
 
 func _ready() -> void:
-	set_process_input(true)
+	# UI controls should consume their own clicks. The map only handles
+	# unhandled input, so a button press can never also select a constituency.
+	set_process_input(false)
+	set_process_unhandled_input(true)
 
 	var loader := GISDataLoader.new()
 
@@ -77,10 +87,9 @@ func _ready() -> void:
 
 	print("GIS seats loaded: ", seats.size())
 
-	assert(
-		seats.size() == 543,
-		"Project 543 requires exactly 543 constituencies."
-	)
+	if seats.size() != 543:
+		push_error("Project 543 requires exactly 543 constituencies; got %d" % seats.size())
+		return
 
 	if not _validate_seats():
 		return
@@ -378,7 +387,7 @@ func _clamp_map_position() -> void:
 	)
 
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if projection == null:
 		return
 
@@ -667,10 +676,34 @@ func bind_political_state(
 	queue_redraw()
 
 
+func bind_campaign_view(
+	leaders: Dictionary,
+	party_colours: Dictionary,
+	home_id: String = "",
+	result_mode: bool = false
+) -> void:
+	campaign_leaders = leaders.duplicate(true)
+	campaign_party_colours = party_colours.duplicate(true)
+	campaign_home_id = home_id
+	campaign_result_mode = result_mode
+	queue_redraw()
+
+
+func clear_campaign_view() -> void:
+	campaign_leaders.clear()
+	campaign_party_colours.clear()
+	campaign_home_id = ""
+	campaign_result_mode = false
+	queue_redraw()
+
+
+func clear_selection() -> void:
+	selected_seat_index = -1
+	hovered_seat_index = -1
+	queue_redraw()
+
+
 func _draw() -> void:
-	# Background.
-
-
 	if projection == null:
 		return
 
@@ -679,24 +712,42 @@ func _draw() -> void:
 
 		var polygons: Array = entry["polygons"]
 
+		var seat_id := String(entry["seat"].get("unique_id", ""))
 		var line_color := MAP_LINE_COLOR
 		var line_width := BASE_LINE_WIDTH
+		var fill_color := Color(0.055, 0.095, 0.16, 0.90)
+
+		if campaign_leaders.has(seat_id):
+			var party_id := String(campaign_leaders[seat_id])
+			var party_color: Color = campaign_party_colours.get(party_id, Color(0.20, 0.30, 0.42, 1.0))
+			fill_color = Color(party_color.r, party_color.g, party_color.b, 0.58 if campaign_result_mode else 0.30)
+
+		if seat_id == campaign_home_id:
+			fill_color = fill_color.lightened(0.18)
+			line_color = MAP_SELECTED_COLOR
+			line_width = 2.0
 
 		if index == hovered_seat_index:
 			line_color = MAP_HOVER_COLOR
 			line_width = HOVER_LINE_WIDTH
+			fill_color = fill_color.lightened(0.12)
 
 		if index == selected_seat_index:
 			line_color = MAP_SELECTED_COLOR
 			line_width = SELECTED_LINE_WIDTH
+			fill_color = fill_color.lightened(0.16)
 
 		for polygon in polygons:
+			if polygon.is_empty():
+				continue
+			var outer_ring: PackedVector2Array = polygon[0]
+			if outer_ring.size() >= 3:
+				draw_colored_polygon(outer_ring, fill_color)
+
 			for ring in polygon:
 				var points: PackedVector2Array = ring
-
 				if points.size() < 2:
 					continue
-
 				draw_polyline(
 					points,
 					line_color,

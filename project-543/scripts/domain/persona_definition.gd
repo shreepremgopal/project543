@@ -77,9 +77,10 @@ func to_dictionary() -> Dictionary:
 
 static func from_dictionary(data: Dictionary) -> PersonaDefinition:
 	var profile_data: Dictionary = data.get("ideology_profile", {})
+	var persona_id := String(data.get("persona_id", ""))
 	return PersonaDefinition.new(
-		String(data.get("persona_id", "")),
-		String(data.get("display_name", "")),
+		persona_id,
+		String(data.get("display_name", persona_id)),
 		IdeologyProfile.from_dictionary(profile_data),
 		data.get("priority_weights", {}),
 		bool(data.get("approved", false)),
