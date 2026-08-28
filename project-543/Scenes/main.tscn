@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://b47e1370hli1t" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://djtelylo3ijc6" path="res://scripts/constituency_panel.gd" id="2_panel"]
 [ext_resource type="PackedScene" uid="uid://dslmd8n5qmhev" path="res://Scenes/india_map.tscn" id="3_map"]
+[ext_resource type="Script" path="res://scripts/ultimate_campaign.gd" id="4_campaign"]
 
 [node name="Main" type="Node2D" unique_id=1886185743]
 script = ExtResource("1_main")
@@ -35,11 +36,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "INITIALISING POLITICAL INTELLIGENCE..."
 
-[node name="Money" type="Label" parent="HUD/TopBar" unique_id=708818387]
+[node name="Money" type="Label" parent="HUD/TopBar"]
 layout_mode = 2
 text = "FUNDS  ₹0"
 
-[node name="Turn" type="Label" parent="HUD/TopBar" unique_id=972985992]
+[node name="Turn" type="Label" parent="HUD/TopBar"]
 layout_mode = 2
 text = "TURN  01"
 
@@ -51,3 +52,6 @@ offset_bottom = 690.0
 script = ExtResource("2_panel")
 
 [node name="IndiaMap" parent="." unique_id=1280342818 instance=ExtResource("3_map")]
+
+[node name="UltimateCampaign" type="Node" parent="."]
+script = ExtResource("4_campaign")
