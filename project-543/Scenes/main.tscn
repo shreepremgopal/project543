@@ -31,7 +31,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "PROJECT 543  •  NATIONAL CAMPAIGN"
 
-[node name="Status" type="Label" parent="HUD/TopBar" unique_id=15391039]
+[node name="Status" type="Label" parent="HUD/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "INITIALISING POLITICAL INTELLIGENCE..."
