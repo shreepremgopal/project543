@@ -1,0 +1,35 @@
+name: Project 543 Godot Validation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3 -o /tmp/godot.zip \
+            https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          mv /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 /usr/local/bin/godot
+          chmod +x /usr/local/bin/godot
+          godot --version
+
+      - name: Import project
+        working-directory: project-543
+        run: godot --headless --editor --quit --path .
+
+      - name: Master validation
+        working-directory: project-543
+        run: godot --headless --path . --script res://tools/master_validation.gd
+
+      - name: Smoke launch
+        working-directory: project-543
+        run: timeout 25s godot --headless --path . --editor --quit-after 10 || test $? -eq 124

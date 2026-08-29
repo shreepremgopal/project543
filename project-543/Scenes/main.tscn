@@ -1,8 +1,7 @@
 [gd_scene format=3 uid="uid://ddl0k1kkac3jw"]
 
 [ext_resource type="Script" uid="uid://b47e1370hli1t" path="res://scripts/main.gd" id="1_main"]
-[ext_resource type="Script" uid="uid://djtelylo3ijc6" path="res://scripts/constituency_panel.gd" id="2_panel"]
-[ext_resource type="PackedScene" uid="uid://dslmd8n5qmhev" path="res://Scenes/india_map.tscn" id="3_map"]
+[ext_resource type="PackedScene" uid="uid://dslmd8n5qmhev" path="res://Scenes/india_map.tscn" id="2_map"]
 
 [node name="Main" type="Node2D" unique_id=1886185743]
 script = ExtResource("1_main")
@@ -13,41 +12,4 @@ offset_bottom = 720.0
 mouse_filter = 2
 color = Color(0.018, 0.027, 0.055, 1)
 
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1203722234]
-
-[node name="TopBar" type="PanelContainer" parent="HUD" unique_id=577740918]
-offset_left = 20.0
-offset_top = 18.0
-offset_right = 1260.0
-offset_bottom = 78.0
-
-[node name="Bar" type="HBoxContainer" parent="HUD/TopBar" unique_id=1285362604]
-layout_mode = 2
-theme_override_constants/separation = 24
-
-[node name="Title" type="Label" parent="HUD/TopBar/Bar" unique_id=1166166504]
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "PROJECT 543  •  NATIONAL CAMPAIGN"
-
-[node name="Status" type="Label" parent="HUD/TopBar" unique_id=15391039]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "INITIALISING POLITICAL INTELLIGENCE..."
-
-[node name="Money" type="Label" parent="HUD/TopBar" unique_id=708818387]
-layout_mode = 2
-text = "FUNDS  ₹0"
-
-[node name="Turn" type="Label" parent="HUD/TopBar" unique_id=972985992]
-layout_mode = 2
-text = "TURN  01"
-
-[node name="Panel" type="PanelContainer" parent="HUD" unique_id=1045483233]
-offset_left = 24.0
-offset_top = 100.0
-offset_right = 414.0
-offset_bottom = 690.0
-script = ExtResource("2_panel")
-
-[node name="IndiaMap" parent="." unique_id=1280342818 instance=ExtResource("3_map")]
+[node name="IndiaMap" parent="." unique_id=1280342818 instance=ExtResource("2_map")]

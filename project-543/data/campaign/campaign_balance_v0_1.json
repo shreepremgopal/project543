@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "model_version": "campaign-v0.1",
+  "config_version": "campaign-config-v0.1",
+  "campaign_weeks": 45,
+  "actions_per_week": 2,
+  "starting_money": 500000,
+  "starting_followers": 100,
+  "eligibility_factor": 0.65,
+  "default_turnout": 0.68,
+  "population_min": 1000000,
+  "population_max": 3000000,
+  "base_support_total": 0.58,
+  "risk_scandal_threshold": 0.5,
+  "risk_scandal_duration": 10,
+  "risk_scandal_modifier": 0.5,
+  "risk_recovery_per_week": 0.02,
+  "saturation_step": 0.2,
+  "saturation_floor": 0.35,
+  "saturation_decay": 0.5,
+  "actions": {
+    "rally": {"cost": 100000, "support_effect": 0.01, "duration": 0, "followers_gain": 12},
+    "interview": {"cost": 50000, "support_effect": 0.005, "duration": 3, "followers_gain": 4},
+    "manifesto": {"cost": 75000, "support_effect": 0.025, "duration": 8, "followers_gain": 20}
+  },
+  "fundraising": [
+    {"amount": 100000, "efficiency": 0.8, "risk_delta": 0.02},
+    {"amount": 250000, "efficiency": 0.8, "risk_delta": 0.05},
+    {"amount": 500000, "efficiency": 0.8, "risk_delta": 0.1},
+    {"amount": 1000000, "efficiency": 0.8, "risk_delta": 0.2}
+  ],
+  "businesses": [
+    {"id": "food_stall", "name": "Food Stall", "cost": 20000, "income": 2000, "limit": 10, "description": "A modest but reliable local income stream."},
+    {"id": "water_supply", "name": "Water Supply", "cost": 50000, "income": 5000, "limit": 10, "description": "A dependable utility investment."},
+    {"id": "hotel", "name": "Hotel", "cost": 100000, "income": 10000, "limit": 10, "description": "Balanced growth with a clear ten-week payback."},
+    {"id": "farmland", "name": "Farmland", "cost": 500000, "income": 50000, "limit": 10, "description": "Large capital commitment with strong recurring income."},
+    {"id": "large_business", "name": "Large Business", "cost": 1000000, "income": 100000, "limit": 10, "description": "A national-scale investment for a mature campaign."}
+  ],
+  "manifestos": [
+    {"id": "infrastructure_first", "name": "Infrastructure First", "cost": 75000, "duration": 8, "support_effect": 0.025, "focus_personas": ["persona_06", "persona_11", "persona_12", "persona_19"], "description": "Prioritises roads, connectivity and visible national development."},
+    {"id": "people_first", "name": "People First", "cost": 75000, "duration": 8, "support_effect": 0.025, "focus_personas": ["persona_02", "persona_03", "persona_17", "persona_18", "persona_21"], "description": "Puts welfare, services, education and healthcare at the centre."},
+    {"id": "clean_government", "name": "Clean Government", "cost": 75000, "duration": 8, "support_effect": 0.025, "focus_personas": ["persona_07", "persona_09", "persona_20", "persona_23"], "description": "A reform platform for voters who want accountable institutions."},
+    {"id": "green_transition", "name": "Green Transition", "cost": 75000, "duration": 8, "support_effect": 0.025, "focus_personas": ["persona_10", "persona_11", "persona_22"], "description": "Pairs environmental stewardship with technology and rural resilience."}
+  ],
+  "parties": [
+    {"id": "party_player", "name": "National Reform", "leader": "Campaign Director", "colour": "#3B82F6", "personality": "player", "starting_money": 500000, "starting_followers": 100, "home_state": "", "ideology_profile": {"economic_policy": -0.15, "welfare": 0.2, "social_policy": -0.1, "governance": 0.3, "environment": 0.2, "national_policy": 0.25}},
+    {"id": "party_development", "name": "Development Front", "leader": "Arjun Mehta", "colour": "#F97316", "personality": "economic", "starting_money": 700000, "starting_followers": 500, "home_state": "Gujarat", "ideology_profile": {"economic_policy": 0.35, "welfare": -0.05, "social_policy": 0.2, "governance": 0.05, "environment": -0.15, "national_policy": 0.35}},
+    {"id": "party_people", "name": "People's Coalition", "leader": "Meera Das", "colour": "#22C55E", "personality": "regional", "starting_money": 650000, "starting_followers": 650, "home_state": "Uttar Pradesh", "ideology_profile": {"economic_policy": -0.25, "welfare": 0.4, "social_policy": 0.1, "governance": -0.05, "environment": 0.3, "national_policy": -0.05}},
+    {"id": "party_civic", "name": "Civic Alliance", "leader": "Kabir Sen", "colour": "#A855F7", "personality": "campaigner", "starting_money": 600000, "starting_followers": 450, "home_state": "Kerala", "ideology_profile": {"economic_policy": 0.05, "welfare": 0.1, "social_policy": -0.25, "governance": 0.4, "environment": 0.05, "national_policy": 0.0}}
+  ]
+}
